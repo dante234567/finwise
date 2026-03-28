@@ -1,13 +1,24 @@
 import { PrismaClient } from '@/generated/prisma'
 
-const prismaClientSingleton = () => {
-  return new PrismaClient()
-}
-
 declare global {
-  var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
+  var prismaGlobal: PrismaClient | undefined
 }
 
-export const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
+/**
+ * Patrón Proxy Lazy para el Cliente de Prisma.
+ *
+ * Durante 'next build', Next.js evalúa todos los módulos. Si se instancia
+ * PrismaClient de forma estática y DATABASE_URL no está definida, el build falla.
+ * El uso de un Proxy garantiza que New PrismaClient() solo se ejecute cuando 
+ * se acceda a una de sus propiedades (ej. al llamar a una consulta).
+ */
+export const prisma = new Proxy({} as PrismaClient, {
+  get(target, prop, receiver) {
+    if (prop === 'then') return undefined; // Compatibility with Promise-like checks if any
 
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
+    if (!globalThis.prismaGlobal) {
+      globalThis.prismaGlobal = new PrismaClient()
+    }
+    return Reflect.get(globalThis.prismaGlobal, prop, receiver)
+  }
+})
