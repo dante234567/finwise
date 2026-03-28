@@ -17,20 +17,21 @@ import { serializeTransaction, type SerializedTransaction } from '@/lib/serializ
 import type { ActionResponse } from '@/types/action'
 
 /**
- * createTransaction — Crea una transacción validada y serializada.
+ * createTransactionAction — Crea una transacción validada y serializada.
  *
  * Flujo:
- *   1. Valida el input con safeParse() (sin excepciones).
- *   2. Convierte amount (string) → Prisma.Decimal para persistencia.
- *   3. Serializa el resultado (Decimal → string) antes de retornar.
+ *   1. Mapea 'descripcion' a 'concept' si viene desde frontend legacy.
+ *   2. Valida el input con safeParse() (sin excepciones).
+ *   3. Convierte amount (string) → Prisma.Decimal para persistencia.
+ *   4. Serializa el resultado (Decimal → string) antes de retornar.
  *
  * @param profileId - UUID del perfil propietario de la transacción.
- * @param input - Payload crudo del cliente (será validado por Zod).
+ * @param rawInput - Payload crudo del cliente (será validado por Zod).
  * @returns ActionResponse<SerializedTransaction>
  */
-export async function createTransaction(
+export async function createTransactionAction(
   profileId: string,
-  input: unknown
+  rawInput: unknown
 ): Promise<ActionResponse<SerializedTransaction>> {
   // ── Validación de profileId ─────────────────────────────────────────
   if (!profileId || typeof profileId !== 'string' || profileId.trim().length === 0) {
@@ -41,8 +42,18 @@ export async function createTransaction(
     }
   }
 
+  // ── Normalización Defensiva ──────────────────────────────────────────
+  // Permite que el frontend envié 'descripcion' (react state) en lugar de 'concept' (db)
+  let normalizedInput = rawInput
+  if (typeof rawInput === 'object' && rawInput !== null) {
+    const obj = rawInput as Record<string, unknown>
+    if ('descripcion' in obj && !('concept' in obj)) {
+      normalizedInput = { ...obj, concept: obj.descripcion }
+    }
+  }
+
   // ── Validación defensiva con safeParse (sin excepciones) ────────────
-  const parseResult = TransactionInputSchema.safeParse(input)
+  const parseResult = TransactionInputSchema.safeParse(normalizedInput)
 
   if (!parseResult.success) {
     const fieldErrors = parseResult.error.issues
@@ -74,10 +85,10 @@ export async function createTransaction(
 
     return { success: true, data: serializeTransaction(transaction) }
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido en createTransaction'
+    const message = error instanceof Error ? error.message : 'Error desconocido en createTransactionAction'
     const isNetworkError = message.includes('P1001') || message.includes("Can't reach database")
     console.error(
-      `[createTransaction] ${isNetworkError ? 'NETWORK' : 'DB'} ERROR for profileId="${profileId}":`,
+      `[createTransactionAction] ${isNetworkError ? 'NETWORK' : 'DB'} ERROR for profileId="${profileId}":`,
       message
     )
     return {

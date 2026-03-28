@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { serializeTransaction } from '@/lib/serializers'
-import { createTransaction } from '@/actions/transactions'
+import { createTransactionAction } from '@/actions/transactions'
 import { corsHeaders } from '../cors'
 
 export async function OPTIONS() {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         { status: 400, headers: corsHeaders }
       )
     }
-    const result = await createTransaction(profileId, input)
+    const result = await createTransactionAction(profileId, input)
     return NextResponse.json(result, { status: result.success ? 201 : 400, headers: corsHeaders })
   } catch {
     return NextResponse.json(

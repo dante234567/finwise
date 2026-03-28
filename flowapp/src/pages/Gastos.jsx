@@ -90,7 +90,7 @@ export default function Gastos() {
                   className="flex items-center gap-3 cursor-pointer hover:bg-navy-50 rounded-xl p-2 -mx-2 transition-colors"
                   onClick={() => setMovSelected(mov)}
                 >
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                     mov.tipo === 'ingreso' ? 'bg-emerald-50' : 'bg-orange-50'
                   }`}>
                     <svg viewBox="0 0 24 24" fill="none"
@@ -109,7 +109,7 @@ export default function Gastos() {
                       <p className="text-[10px] text-navy-300">{mov.categoria}</p>
                     </div>
                   </div>
-                  <p className={`text-sm font-semibold flex-shrink-0 ${
+                  <p className={`text-sm font-semibold shrink-0 ${
                     mov.tipo === 'ingreso' ? 'text-emerald-600' : 'text-orange-500'
                   }`}>
                     {mov.tipo === 'ingreso' ? '+' : '-'}{fmt(mov.monto)}
