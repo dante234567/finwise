@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    @apply bg-navy-50 font-sans text-navy-500;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Scrollbar delgada */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-navy-100 rounded-full; }
+}
+
+@layer components {
+  /* Animación de entrada para páginas */
+  .page-enter {
+    animation: fadeSlideUp 0.25s ease forwards;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white rounded-2xl border border-navy-100 p-4;
+  }
+
+  /* Input base */
+  .input-base {
+    @apply w-full rounded-xl border border-navy-100 px-3 py-2.5 text-sm text-navy-500
+           focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-transparent
+           placeholder:text-navy-200 transition-all;
+  }
+
+  /* Botón primario */
+  .btn-primary {
+    @apply bg-navy-500 text-white rounded-xl px-4 py-2.5 text-sm font-medium
+           active:scale-95 transition-all hover:bg-navy-400;
+  }
+
+  /* Botón secundario */
+  .btn-secondary {
+    @apply bg-navy-50 text-navy-400 border border-navy-100 rounded-xl px-4 py-2.5
+           text-sm font-medium active:scale-95 transition-all hover:bg-navy-100;
+  }
+
+  /* Badge positivo */
+  .badge-up {
+    @apply text-emerald-600 text-xs flex items-center gap-1;
+  }
+  .badge-down {
+    @apply text-orange-500 text-xs flex items-center gap-1;
+  }
+}
