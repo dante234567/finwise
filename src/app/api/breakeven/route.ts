@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const dynamic = 'force-dynamic'
 import { calculateBreakeven } from '@/actions/breakeven'
 import { corsHeaders } from '../cors'
 
