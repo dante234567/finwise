@@ -1,0 +1,35 @@
+﻿node.exe : Loaded Prisma 
+config from 
+prisma.config.ts.
+En línea: 1 Carácter: 1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (L  
+  oaded Prisma c...isma   
+ .config.ts.:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+Prisma schema loaded from 
+prisma\schema.prisma.
+Datasource "db": PostgreSQL database "postgres", schema "public" at "db.ceyrblwycilcabpqxicj.supabase.co:5432"
+
+Error: P1001: Can't reach 
+database server at `db.cey
+rblwycilcabpqxicj.supabase
+.co:5432`
+
+Please make sure your 
+database server is 
+running at `db.ceyrblwycil
+cabpqxicj.supabase.co:5432
+`.

@@ -120,50 +120,26 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.UserScalarFieldEnum = {
+exports.Prisma.ProfileScalarFieldEnum = {
   id: 'id',
-  authId: 'authId',
-  email: 'email',
-  name: 'name',
+  authUserId: 'authUserId',
+  targetMargin: 'targetMargin',
+  taxFixed: 'taxFixed',
+  taxVariable: 'taxVariable',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
 exports.Prisma.TransactionScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
+  profileId: 'profileId',
   amount: 'amount',
-  currency: 'currency',
   type: 'type',
-  category: 'category',
-  description: 'description',
-  date: 'date',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.BreakevenScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  name: 'name',
-  fixedCosts: 'fixedCosts',
-  variableCostPerUnit: 'variableCostPerUnit',
-  pricePerUnit: 'pricePerUnit',
-  currency: 'currency',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ProjectionScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  name: 'name',
-  monthlyRevenue: 'monthlyRevenue',
-  growthRate: 'growthRate',
-  months: 'months',
-  currency: 'currency',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  concept: 'concept',
+  quantity: 'quantity',
+  isFixed: 'isFixed',
+  isBusiness: 'isBusiness',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -175,18 +151,14 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
+exports.TransactionType = exports.$Enums.TransactionType = {
+  INCOME: 'INCOME',
+  EXPENSE: 'EXPENSE'
 };
 
-
 exports.Prisma.ModelName = {
-  User: 'User',
-  Transaction: 'Transaction',
-  Breakeven: 'Breakeven',
-  Projection: 'Projection'
+  Profile: 'Profile',
+  Transaction: 'Transaction'
 };
 
 /**

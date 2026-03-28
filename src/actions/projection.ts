@@ -1,8 +1,6 @@
-// Server Actions de proyecciones — CRUD y cálculo de escenarios
+// Server Actions de proyecciones — cálculo dinámico (no persistido)
 'use server'
 
-// TODO: Implementar en feat/projections
-// - createProjection(input: CreateProjectionInput)
-// - getProjections(userId: string)
-// - calculateScenarios(input: CreateProjectionInput): ProjectionResult
-// - deleteProjection(id: string)
+// TODO: Implementar en Subplan del motor de proyecciones
+// - calculateProjection(profileId: string, input: ProjectionInput): Promise<ProjectionResult>
+//   → Deriva escenarios a partir de tendencia histórica y parámetros del perfil

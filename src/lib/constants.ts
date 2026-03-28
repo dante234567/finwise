@@ -1,20 +1,7 @@
 // Constantes compartidas de la app — categorías, monedas, límites
 
-/** Categorías de transacciones disponibles */
-export const TRANSACTION_CATEGORIES = [
-  'ventas',
-  'servicios',
-  'insumos',
-  'salarios',
-  'alquiler',
-  'impuestos',
-  'marketing',
-  'logistica',
-  'otros',
-] as const
-
-/** Tipos de transacción */
-export const TRANSACTION_TYPES = ['income', 'expense'] as const
+/** Tipos de transacción — alineados con enum TransactionType de Prisma */
+export const TRANSACTION_TYPES = ['INCOME', 'EXPENSE'] as const
 
 /** Moneda por defecto */
 export const DEFAULT_CURRENCY = 'ARS'

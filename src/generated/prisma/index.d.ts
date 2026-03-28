@@ -14,25 +14,35 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
- * Model User
- * Usuario del sistema — vinculado a Supabase Auth por authId
+ * Model Profile
+ * Perfil del tenant — configuración fiscal y de ganancia deseada (α)
+ * Vinculado 1:1 con Supabase Auth mediante authUserId
  */
-export type User = $Result.DefaultSelection<Prisma.$UserPayload>
+export type Profile = $Result.DefaultSelection<Prisma.$ProfilePayload>
 /**
  * Model Transaction
- * Transacción financiera — ingreso o gasto del negocio
+ * Transacción financiera con clasificación bidimensional
+ * Dimensión de Comportamiento: isFixed (Fijo/Variable)
+ * Dimensión de Pertenencia:    isBusiness (Negocio/Personal)
  */
 export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
+
 /**
- * Model Breakeven
- * Análisis de punto de equilibrio del negocio
+ * Enums
  */
-export type Breakeven = $Result.DefaultSelection<Prisma.$BreakevenPayload>
-/**
- * Model Projection
- * Proyección de ventas con escenarios
- */
-export type Projection = $Result.DefaultSelection<Prisma.$ProjectionPayload>
+export namespace $Enums {
+  export const TransactionType: {
+  INCOME: 'INCOME',
+  EXPENSE: 'EXPENSE'
+};
+
+export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
+
+}
+
+export type TransactionType = $Enums.TransactionType
+
+export const TransactionType: typeof $Enums.TransactionType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -43,8 +53,8 @@ export type Projection = $Result.DefaultSelection<Prisma.$ProjectionPayload>
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Profiles
+ * const profiles = await prisma.profile.findMany()
  * ```
  *
  *
@@ -66,8 +76,8 @@ export class PrismaClient<
    * const prisma = new PrismaClient({
    *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
    * })
-   * // Fetch zero or more Users
-   * const users = await prisma.user.findMany()
+   * // Fetch zero or more Profiles
+   * const profiles = await prisma.profile.findMany()
    * ```
    *
    *
@@ -156,14 +166,14 @@ export class PrismaClient<
   }>>
 
       /**
-   * `prisma.user`: Exposes CRUD operations for the **User** model.
+   * `prisma.profile`: Exposes CRUD operations for the **Profile** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Users
-    * const users = await prisma.user.findMany()
+    * // Fetch zero or more Profiles
+    * const profiles = await prisma.profile.findMany()
     * ```
     */
-  get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+  get profile(): Prisma.ProfileDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.transaction`: Exposes CRUD operations for the **Transaction** model.
@@ -174,26 +184,6 @@ export class PrismaClient<
     * ```
     */
   get transaction(): Prisma.TransactionDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.breakeven`: Exposes CRUD operations for the **Breakeven** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Breakevens
-    * const breakevens = await prisma.breakeven.findMany()
-    * ```
-    */
-  get breakeven(): Prisma.BreakevenDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.projection`: Exposes CRUD operations for the **Projection** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Projections
-    * const projections = await prisma.projection.findMany()
-    * ```
-    */
-  get projection(): Prisma.ProjectionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -628,10 +618,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    User: 'User',
-    Transaction: 'Transaction',
-    Breakeven: 'Breakeven',
-    Projection: 'Projection'
+    Profile: 'Profile',
+    Transaction: 'Transaction'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -647,81 +635,81 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "transaction" | "breakeven" | "projection"
+      modelProps: "profile" | "transaction"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
-      User: {
-        payload: Prisma.$UserPayload<ExtArgs>
-        fields: Prisma.UserFieldRefs
+      Profile: {
+        payload: Prisma.$ProfilePayload<ExtArgs>
+        fields: Prisma.ProfileFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.UserFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload> | null
+            args: Prisma.ProfileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.UserFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            args: Prisma.ProfileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>
           }
           findFirst: {
-            args: Prisma.UserFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload> | null
+            args: Prisma.ProfileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.UserFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            args: Prisma.ProfileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>
           }
           findMany: {
-            args: Prisma.UserFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>[]
+            args: Prisma.ProfileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>[]
           }
           create: {
-            args: Prisma.UserCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            args: Prisma.ProfileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>
           }
           createMany: {
-            args: Prisma.UserCreateManyArgs<ExtArgs>
+            args: Prisma.ProfileCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.UserCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>[]
+            args: Prisma.ProfileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>[]
           }
           delete: {
-            args: Prisma.UserDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            args: Prisma.ProfileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>
           }
           update: {
-            args: Prisma.UserUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            args: Prisma.ProfileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>
           }
           deleteMany: {
-            args: Prisma.UserDeleteManyArgs<ExtArgs>
+            args: Prisma.ProfileDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.UserUpdateManyArgs<ExtArgs>
+            args: Prisma.ProfileUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateManyAndReturn: {
-            args: Prisma.UserUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>[]
+            args: Prisma.ProfileUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>[]
           }
           upsert: {
-            args: Prisma.UserUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            args: Prisma.ProfileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePayload>
           }
           aggregate: {
-            args: Prisma.UserAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateUser>
+            args: Prisma.ProfileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProfile>
           }
           groupBy: {
-            args: Prisma.UserGroupByArgs<ExtArgs>
-            result: $Utils.Optional<UserGroupByOutputType>[]
+            args: Prisma.ProfileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProfileGroupByOutputType>[]
           }
           count: {
-            args: Prisma.UserCountArgs<ExtArgs>
-            result: $Utils.Optional<UserCountAggregateOutputType> | number
+            args: Prisma.ProfileCountArgs<ExtArgs>
+            result: $Utils.Optional<ProfileCountAggregateOutputType> | number
           }
         }
       }
@@ -796,154 +784,6 @@ export namespace Prisma {
           count: {
             args: Prisma.TransactionCountArgs<ExtArgs>
             result: $Utils.Optional<TransactionCountAggregateOutputType> | number
-          }
-        }
-      }
-      Breakeven: {
-        payload: Prisma.$BreakevenPayload<ExtArgs>
-        fields: Prisma.BreakevenFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.BreakevenFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.BreakevenFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>
-          }
-          findFirst: {
-            args: Prisma.BreakevenFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.BreakevenFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>
-          }
-          findMany: {
-            args: Prisma.BreakevenFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>[]
-          }
-          create: {
-            args: Prisma.BreakevenCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>
-          }
-          createMany: {
-            args: Prisma.BreakevenCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.BreakevenCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>[]
-          }
-          delete: {
-            args: Prisma.BreakevenDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>
-          }
-          update: {
-            args: Prisma.BreakevenUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>
-          }
-          deleteMany: {
-            args: Prisma.BreakevenDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.BreakevenUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.BreakevenUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>[]
-          }
-          upsert: {
-            args: Prisma.BreakevenUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BreakevenPayload>
-          }
-          aggregate: {
-            args: Prisma.BreakevenAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateBreakeven>
-          }
-          groupBy: {
-            args: Prisma.BreakevenGroupByArgs<ExtArgs>
-            result: $Utils.Optional<BreakevenGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.BreakevenCountArgs<ExtArgs>
-            result: $Utils.Optional<BreakevenCountAggregateOutputType> | number
-          }
-        }
-      }
-      Projection: {
-        payload: Prisma.$ProjectionPayload<ExtArgs>
-        fields: Prisma.ProjectionFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.ProjectionFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.ProjectionFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>
-          }
-          findFirst: {
-            args: Prisma.ProjectionFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.ProjectionFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>
-          }
-          findMany: {
-            args: Prisma.ProjectionFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>[]
-          }
-          create: {
-            args: Prisma.ProjectionCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>
-          }
-          createMany: {
-            args: Prisma.ProjectionCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.ProjectionCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>[]
-          }
-          delete: {
-            args: Prisma.ProjectionDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>
-          }
-          update: {
-            args: Prisma.ProjectionUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>
-          }
-          deleteMany: {
-            args: Prisma.ProjectionDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.ProjectionUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.ProjectionUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>[]
-          }
-          upsert: {
-            args: Prisma.ProjectionUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectionPayload>
-          }
-          aggregate: {
-            args: Prisma.ProjectionAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateProjection>
-          }
-          groupBy: {
-            args: Prisma.ProjectionGroupByArgs<ExtArgs>
-            result: $Utils.Optional<ProjectionGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.ProjectionCountArgs<ExtArgs>
-            result: $Utils.Optional<ProjectionCountAggregateOutputType> | number
           }
         }
       }
@@ -1055,10 +895,8 @@ export namespace Prisma {
     comments?: runtime.SqlCommenterPlugin[]
   }
   export type GlobalOmitConfig = {
-    user?: UserOmit
+    profile?: ProfileOmit
     transaction?: TransactionOmit
-    breakeven?: BreakevenOmit
-    projection?: ProjectionOmit
   }
 
   /* Types for Logging */
@@ -1135,51 +973,33 @@ export namespace Prisma {
 
 
   /**
-   * Count Type UserCountOutputType
+   * Count Type ProfileCountOutputType
    */
 
-  export type UserCountOutputType = {
+  export type ProfileCountOutputType = {
     transactions: number
-    breakevens: number
-    projections: number
   }
 
-  export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
-    breakevens?: boolean | UserCountOutputTypeCountBreakevensArgs
-    projections?: boolean | UserCountOutputTypeCountProjectionsArgs
+  export type ProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactions?: boolean | ProfileCountOutputTypeCountTransactionsArgs
   }
 
   // Custom InputTypes
   /**
-   * UserCountOutputType without action
+   * ProfileCountOutputType without action
    */
-  export type UserCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the UserCountOutputType
+     * Select specific fields to fetch from the ProfileCountOutputType
      */
-    select?: UserCountOutputTypeSelect<ExtArgs> | null
+    select?: ProfileCountOutputTypeSelect<ExtArgs> | null
   }
 
   /**
-   * UserCountOutputType without action
+   * ProfileCountOutputType without action
    */
-  export type UserCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountBreakevensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BreakevenWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountProjectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ProjectionWhereInput
   }
 
 
@@ -1188,364 +1008,421 @@ export namespace Prisma {
    */
 
   /**
-   * Model User
+   * Model Profile
    */
 
-  export type AggregateUser = {
-    _count: UserCountAggregateOutputType | null
-    _min: UserMinAggregateOutputType | null
-    _max: UserMaxAggregateOutputType | null
+  export type AggregateProfile = {
+    _count: ProfileCountAggregateOutputType | null
+    _avg: ProfileAvgAggregateOutputType | null
+    _sum: ProfileSumAggregateOutputType | null
+    _min: ProfileMinAggregateOutputType | null
+    _max: ProfileMaxAggregateOutputType | null
   }
 
-  export type UserMinAggregateOutputType = {
+  export type ProfileAvgAggregateOutputType = {
+    targetMargin: Decimal | null
+    taxFixed: Decimal | null
+    taxVariable: Decimal | null
+  }
+
+  export type ProfileSumAggregateOutputType = {
+    targetMargin: Decimal | null
+    taxFixed: Decimal | null
+    taxVariable: Decimal | null
+  }
+
+  export type ProfileMinAggregateOutputType = {
     id: string | null
-    authId: string | null
-    email: string | null
-    name: string | null
+    authUserId: string | null
+    targetMargin: Decimal | null
+    taxFixed: Decimal | null
+    taxVariable: Decimal | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
-  export type UserMaxAggregateOutputType = {
+  export type ProfileMaxAggregateOutputType = {
     id: string | null
-    authId: string | null
-    email: string | null
-    name: string | null
+    authUserId: string | null
+    targetMargin: Decimal | null
+    taxFixed: Decimal | null
+    taxVariable: Decimal | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
-  export type UserCountAggregateOutputType = {
+  export type ProfileCountAggregateOutputType = {
     id: number
-    authId: number
-    email: number
-    name: number
+    authUserId: number
+    targetMargin: number
+    taxFixed: number
+    taxVariable: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
 
-  export type UserMinAggregateInputType = {
+  export type ProfileAvgAggregateInputType = {
+    targetMargin?: true
+    taxFixed?: true
+    taxVariable?: true
+  }
+
+  export type ProfileSumAggregateInputType = {
+    targetMargin?: true
+    taxFixed?: true
+    taxVariable?: true
+  }
+
+  export type ProfileMinAggregateInputType = {
     id?: true
-    authId?: true
-    email?: true
-    name?: true
+    authUserId?: true
+    targetMargin?: true
+    taxFixed?: true
+    taxVariable?: true
     createdAt?: true
     updatedAt?: true
   }
 
-  export type UserMaxAggregateInputType = {
+  export type ProfileMaxAggregateInputType = {
     id?: true
-    authId?: true
-    email?: true
-    name?: true
+    authUserId?: true
+    targetMargin?: true
+    taxFixed?: true
+    taxVariable?: true
     createdAt?: true
     updatedAt?: true
   }
 
-  export type UserCountAggregateInputType = {
+  export type ProfileCountAggregateInputType = {
     id?: true
-    authId?: true
-    email?: true
-    name?: true
+    authUserId?: true
+    targetMargin?: true
+    taxFixed?: true
+    taxVariable?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
   }
 
-  export type UserAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which User to aggregate.
+     * Filter which Profile to aggregate.
      */
-    where?: UserWhereInput
+    where?: ProfileWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Users to fetch.
+     * Determine the order of Profiles to fetch.
      */
-    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    orderBy?: ProfileOrderByWithRelationInput | ProfileOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: UserWhereUniqueInput
+    cursor?: ProfileWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Users from the position of the cursor.
+     * Take `±n` Profiles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Users.
+     * Skip the first `n` Profiles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned Users
+     * Count returned Profiles
     **/
-    _count?: true | UserCountAggregateInputType
+    _count?: true | ProfileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProfileAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProfileSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: UserMinAggregateInputType
+    _min?: ProfileMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: UserMaxAggregateInputType
+    _max?: ProfileMaxAggregateInputType
   }
 
-  export type GetUserAggregateType<T extends UserAggregateArgs> = {
-        [P in keyof T & keyof AggregateUser]: P extends '_count' | 'count'
+  export type GetProfileAggregateType<T extends ProfileAggregateArgs> = {
+        [P in keyof T & keyof AggregateProfile]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateUser[P]>
-      : GetScalarType<T[P], AggregateUser[P]>
+        : GetScalarType<T[P], AggregateProfile[P]>
+      : GetScalarType<T[P], AggregateProfile[P]>
   }
 
 
 
 
-  export type UserGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UserWhereInput
-    orderBy?: UserOrderByWithAggregationInput | UserOrderByWithAggregationInput[]
-    by: UserScalarFieldEnum[] | UserScalarFieldEnum
-    having?: UserScalarWhereWithAggregatesInput
+  export type ProfileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileWhereInput
+    orderBy?: ProfileOrderByWithAggregationInput | ProfileOrderByWithAggregationInput[]
+    by: ProfileScalarFieldEnum[] | ProfileScalarFieldEnum
+    having?: ProfileScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: UserCountAggregateInputType | true
-    _min?: UserMinAggregateInputType
-    _max?: UserMaxAggregateInputType
+    _count?: ProfileCountAggregateInputType | true
+    _avg?: ProfileAvgAggregateInputType
+    _sum?: ProfileSumAggregateInputType
+    _min?: ProfileMinAggregateInputType
+    _max?: ProfileMaxAggregateInputType
   }
 
-  export type UserGroupByOutputType = {
+  export type ProfileGroupByOutputType = {
     id: string
-    authId: string
-    email: string
-    name: string | null
+    authUserId: string
+    targetMargin: Decimal
+    taxFixed: Decimal
+    taxVariable: Decimal
     createdAt: Date
     updatedAt: Date
-    _count: UserCountAggregateOutputType | null
-    _min: UserMinAggregateOutputType | null
-    _max: UserMaxAggregateOutputType | null
+    _count: ProfileCountAggregateOutputType | null
+    _avg: ProfileAvgAggregateOutputType | null
+    _sum: ProfileSumAggregateOutputType | null
+    _min: ProfileMinAggregateOutputType | null
+    _max: ProfileMaxAggregateOutputType | null
   }
 
-  type GetUserGroupByPayload<T extends UserGroupByArgs> = Prisma.PrismaPromise<
+  type GetProfileGroupByPayload<T extends ProfileGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<UserGroupByOutputType, T['by']> &
+      PickEnumerable<ProfileGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof UserGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof ProfileGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], UserGroupByOutputType[P]>
-            : GetScalarType<T[P], UserGroupByOutputType[P]>
+              : GetScalarType<T[P], ProfileGroupByOutputType[P]>
+            : GetScalarType<T[P], ProfileGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    authId?: boolean
-    email?: boolean
-    name?: boolean
+    authUserId?: boolean
+    targetMargin?: boolean
+    taxFixed?: boolean
+    taxVariable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    transactions?: boolean | User$transactionsArgs<ExtArgs>
-    breakevens?: boolean | User$breakevensArgs<ExtArgs>
-    projections?: boolean | User$projectionsArgs<ExtArgs>
-    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["user"]>
+    transactions?: boolean | Profile$transactionsArgs<ExtArgs>
+    _count?: boolean | ProfileCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["profile"]>
 
-  export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    authId?: boolean
-    email?: boolean
-    name?: boolean
+    authUserId?: boolean
+    targetMargin?: boolean
+    taxFixed?: boolean
+    taxVariable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-  }, ExtArgs["result"]["user"]>
+  }, ExtArgs["result"]["profile"]>
 
-  export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ProfileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    authId?: boolean
-    email?: boolean
-    name?: boolean
+    authUserId?: boolean
+    targetMargin?: boolean
+    taxFixed?: boolean
+    taxVariable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-  }, ExtArgs["result"]["user"]>
+  }, ExtArgs["result"]["profile"]>
 
-  export type UserSelectScalar = {
+  export type ProfileSelectScalar = {
     id?: boolean
-    authId?: boolean
-    email?: boolean
-    name?: boolean
+    authUserId?: boolean
+    targetMargin?: boolean
+    taxFixed?: boolean
+    taxVariable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "authId" | "email" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
-  export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    transactions?: boolean | User$transactionsArgs<ExtArgs>
-    breakevens?: boolean | User$breakevensArgs<ExtArgs>
-    projections?: boolean | User$projectionsArgs<ExtArgs>
-    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
+  export type ProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "authUserId" | "targetMargin" | "taxFixed" | "taxVariable" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
+  export type ProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactions?: boolean | Profile$transactionsArgs<ExtArgs>
+    _count?: boolean | ProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type ProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type ProfileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
-  export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "User"
+  export type $ProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Profile"
     objects: {
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
-      breakevens: Prisma.$BreakevenPayload<ExtArgs>[]
-      projections: Prisma.$ProjectionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      authId: string
-      email: string
-      name: string | null
+      authUserId: string
+      /**
+       * α — Porcentaje de ganancia deseada (fracción 0..0.99)
+       */
+      targetMargin: Prisma.Decimal
+      /**
+       * T_F — Cuota fija mensual de Monotributo (mock fiscal)
+       */
+      taxFixed: Prisma.Decimal
+      /**
+       * t_v — Alícuota de Ingresos Brutos (fracción 0..0.99)
+       */
+      taxVariable: Prisma.Decimal
       createdAt: Date
       updatedAt: Date
-    }, ExtArgs["result"]["user"]>
+    }, ExtArgs["result"]["profile"]>
     composites: {}
   }
 
-  type UserGetPayload<S extends boolean | null | undefined | UserDefaultArgs> = $Result.GetResult<Prisma.$UserPayload, S>
+  type ProfileGetPayload<S extends boolean | null | undefined | ProfileDefaultArgs> = $Result.GetResult<Prisma.$ProfilePayload, S>
 
-  type UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<UserFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: UserCountAggregateInputType | true
+  type ProfileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProfileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProfileCountAggregateInputType | true
     }
 
-  export interface UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['User'], meta: { name: 'User' } }
+  export interface ProfileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Profile'], meta: { name: 'Profile' } }
     /**
-     * Find zero or one User that matches the filter.
-     * @param {UserFindUniqueArgs} args - Arguments to find a User
+     * Find zero or one Profile that matches the filter.
+     * @param {ProfileFindUniqueArgs} args - Arguments to find a Profile
      * @example
-     * // Get one User
-     * const user = await prisma.user.findUnique({
+     * // Get one Profile
+     * const profile = await prisma.profile.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends UserFindUniqueArgs>(args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends ProfileFindUniqueArgs>(args: SelectSubset<T, ProfileFindUniqueArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one User that matches the filter or throw an error with `error.code='P2025'`
+     * Find one Profile that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {UserFindUniqueOrThrowArgs} args - Arguments to find a User
+     * @param {ProfileFindUniqueOrThrowArgs} args - Arguments to find a Profile
      * @example
-     * // Get one User
-     * const user = await prisma.user.findUniqueOrThrow({
+     * // Get one Profile
+     * const profile = await prisma.profile.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(args: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends ProfileFindUniqueOrThrowArgs>(args: SelectSubset<T, ProfileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first User that matches the filter.
+     * Find the first Profile that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserFindFirstArgs} args - Arguments to find a User
+     * @param {ProfileFindFirstArgs} args - Arguments to find a Profile
      * @example
-     * // Get one User
-     * const user = await prisma.user.findFirst({
+     * // Get one Profile
+     * const profile = await prisma.profile.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends UserFindFirstArgs>(args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends ProfileFindFirstArgs>(args?: SelectSubset<T, ProfileFindFirstArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first User that matches the filter or
+     * Find the first Profile that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserFindFirstOrThrowArgs} args - Arguments to find a User
+     * @param {ProfileFindFirstOrThrowArgs} args - Arguments to find a Profile
      * @example
-     * // Get one User
-     * const user = await prisma.user.findFirstOrThrow({
+     * // Get one Profile
+     * const profile = await prisma.profile.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends ProfileFindFirstOrThrowArgs>(args?: SelectSubset<T, ProfileFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more Users that matches the filter.
+     * Find zero or more Profiles that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {ProfileFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all Users
-     * const users = await prisma.user.findMany()
+     * // Get all Profiles
+     * const profiles = await prisma.profile.findMany()
      * 
-     * // Get first 10 Users
-     * const users = await prisma.user.findMany({ take: 10 })
+     * // Get first 10 Profiles
+     * const profiles = await prisma.profile.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const userWithIdOnly = await prisma.user.findMany({ select: { id: true } })
+     * const profileWithIdOnly = await prisma.profile.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends ProfileFindManyArgs>(args?: SelectSubset<T, ProfileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a User.
-     * @param {UserCreateArgs} args - Arguments to create a User.
+     * Create a Profile.
+     * @param {ProfileCreateArgs} args - Arguments to create a Profile.
      * @example
-     * // Create one User
-     * const User = await prisma.user.create({
+     * // Create one Profile
+     * const Profile = await prisma.profile.create({
      *   data: {
-     *     // ... data to create a User
+     *     // ... data to create a Profile
      *   }
      * })
      * 
      */
-    create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends ProfileCreateArgs>(args: SelectSubset<T, ProfileCreateArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Create many Users.
-     * @param {UserCreateManyArgs} args - Arguments to create many Users.
+     * Create many Profiles.
+     * @param {ProfileCreateManyArgs} args - Arguments to create many Profiles.
      * @example
-     * // Create many Users
-     * const user = await prisma.user.createMany({
+     * // Create many Profiles
+     * const profile = await prisma.profile.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends UserCreateManyArgs>(args?: SelectSubset<T, UserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends ProfileCreateManyArgs>(args?: SelectSubset<T, ProfileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many Users and returns the data saved in the database.
-     * @param {UserCreateManyAndReturnArgs} args - Arguments to create many Users.
+     * Create many Profiles and returns the data saved in the database.
+     * @param {ProfileCreateManyAndReturnArgs} args - Arguments to create many Profiles.
      * @example
-     * // Create many Users
-     * const user = await prisma.user.createManyAndReturn({
+     * // Create many Profiles
+     * const profile = await prisma.profile.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
-     * // Create many Users and only return the `id`
-     * const userWithIdOnly = await prisma.user.createManyAndReturn({
+     * // Create many Profiles and only return the `id`
+     * const profileWithIdOnly = await prisma.profile.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -1555,28 +1432,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends UserCreateManyAndReturnArgs>(args?: SelectSubset<T, UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+    createManyAndReturn<T extends ProfileCreateManyAndReturnArgs>(args?: SelectSubset<T, ProfileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Delete a User.
-     * @param {UserDeleteArgs} args - Arguments to delete one User.
+     * Delete a Profile.
+     * @param {ProfileDeleteArgs} args - Arguments to delete one Profile.
      * @example
-     * // Delete one User
-     * const User = await prisma.user.delete({
+     * // Delete one Profile
+     * const Profile = await prisma.profile.delete({
      *   where: {
-     *     // ... filter to delete one User
+     *     // ... filter to delete one Profile
      *   }
      * })
      * 
      */
-    delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends ProfileDeleteArgs>(args: SelectSubset<T, ProfileDeleteArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one User.
-     * @param {UserUpdateArgs} args - Arguments to update one User.
+     * Update one Profile.
+     * @param {ProfileUpdateArgs} args - Arguments to update one Profile.
      * @example
-     * // Update one User
-     * const user = await prisma.user.update({
+     * // Update one Profile
+     * const profile = await prisma.profile.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1586,30 +1463,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends ProfileUpdateArgs>(args: SelectSubset<T, ProfileUpdateArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Delete zero or more Users.
-     * @param {UserDeleteManyArgs} args - Arguments to filter Users to delete.
+     * Delete zero or more Profiles.
+     * @param {ProfileDeleteManyArgs} args - Arguments to filter Profiles to delete.
      * @example
-     * // Delete a few Users
-     * const { count } = await prisma.user.deleteMany({
+     * // Delete a few Profiles
+     * const { count } = await prisma.profile.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends UserDeleteManyArgs>(args?: SelectSubset<T, UserDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends ProfileDeleteManyArgs>(args?: SelectSubset<T, ProfileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Users.
+     * Update zero or more Profiles.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {ProfileUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many Users
-     * const user = await prisma.user.updateMany({
+     * // Update many Profiles
+     * const profile = await prisma.profile.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1619,14 +1496,14 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends UserUpdateManyArgs>(args: SelectSubset<T, UserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends ProfileUpdateManyArgs>(args: SelectSubset<T, ProfileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Users and returns the data updated in the database.
-     * @param {UserUpdateManyAndReturnArgs} args - Arguments to update many Users.
+     * Update zero or more Profiles and returns the data updated in the database.
+     * @param {ProfileUpdateManyAndReturnArgs} args - Arguments to update many Profiles.
      * @example
-     * // Update many Users
-     * const user = await prisma.user.updateManyAndReturn({
+     * // Update many Profiles
+     * const profile = await prisma.profile.updateManyAndReturn({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1635,8 +1512,8 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more Users and only return the `id`
-     * const userWithIdOnly = await prisma.user.updateManyAndReturn({
+     * // Update zero or more Profiles and only return the `id`
+     * const profileWithIdOnly = await prisma.profile.updateManyAndReturn({
      *   select: { id: true },
      *   where: {
      *     // ... provide filter here
@@ -1649,56 +1526,56 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    updateManyAndReturn<T extends UserUpdateManyAndReturnArgs>(args: SelectSubset<T, UserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+    updateManyAndReturn<T extends ProfileUpdateManyAndReturnArgs>(args: SelectSubset<T, ProfileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Create or update one User.
-     * @param {UserUpsertArgs} args - Arguments to update or create a User.
+     * Create or update one Profile.
+     * @param {ProfileUpsertArgs} args - Arguments to update or create a Profile.
      * @example
-     * // Update or create a User
-     * const user = await prisma.user.upsert({
+     * // Update or create a Profile
+     * const profile = await prisma.profile.upsert({
      *   create: {
-     *     // ... data to create a User
+     *     // ... data to create a Profile
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the User we want to update
+     *     // ... the filter for the Profile we want to update
      *   }
      * })
      */
-    upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends ProfileUpsertArgs>(args: SelectSubset<T, ProfileUpsertArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
-     * Count the number of Users.
+     * Count the number of Profiles.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserCountArgs} args - Arguments to filter Users to count.
+     * @param {ProfileCountArgs} args - Arguments to filter Profiles to count.
      * @example
-     * // Count the number of Users
-     * const count = await prisma.user.count({
+     * // Count the number of Profiles
+     * const count = await prisma.profile.count({
      *   where: {
-     *     // ... the filter for the Users we want to count
+     *     // ... the filter for the Profiles we want to count
      *   }
      * })
     **/
-    count<T extends UserCountArgs>(
-      args?: Subset<T, UserCountArgs>,
+    count<T extends ProfileCountArgs>(
+      args?: Subset<T, ProfileCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], UserCountAggregateOutputType>
+          : GetScalarType<T['select'], ProfileCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a User.
+     * Allows you to perform aggregations operations on a Profile.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {ProfileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -1718,13 +1595,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends UserAggregateArgs>(args: Subset<T, UserAggregateArgs>): Prisma.PrismaPromise<GetUserAggregateType<T>>
+    aggregate<T extends ProfileAggregateArgs>(args: Subset<T, ProfileAggregateArgs>): Prisma.PrismaPromise<GetProfileAggregateType<T>>
 
     /**
-     * Group by User.
+     * Group by Profile.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserGroupByArgs} args - Group by arguments.
+     * @param {ProfileGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -1739,14 +1616,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends UserGroupByArgs,
+      T extends ProfileGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: UserGroupByArgs['orderBy'] }
-        : { orderBy?: UserGroupByArgs['orderBy'] },
+        ? { orderBy: ProfileGroupByArgs['orderBy'] }
+        : { orderBy?: ProfileGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -1795,24 +1672,22 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, UserGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, ProfileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProfileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the User model
+   * Fields of the Profile model
    */
-  readonly fields: UserFieldRefs;
+  readonly fields: ProfileFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for User.
+   * The delegate class that acts as a "Promise-like" for Profile.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    transactions<T extends User$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    breakevens<T extends User$breakevensArgs<ExtArgs> = {}>(args?: Subset<T, User$breakevensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    projections<T extends User$projectionsArgs<ExtArgs> = {}>(args?: Subset<T, User$projectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transactions<T extends Profile$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1839,411 +1714,412 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the User model
+   * Fields of the Profile model
    */
-  interface UserFieldRefs {
-    readonly id: FieldRef<"User", 'String'>
-    readonly authId: FieldRef<"User", 'String'>
-    readonly email: FieldRef<"User", 'String'>
-    readonly name: FieldRef<"User", 'String'>
-    readonly createdAt: FieldRef<"User", 'DateTime'>
-    readonly updatedAt: FieldRef<"User", 'DateTime'>
+  interface ProfileFieldRefs {
+    readonly id: FieldRef<"Profile", 'String'>
+    readonly authUserId: FieldRef<"Profile", 'String'>
+    readonly targetMargin: FieldRef<"Profile", 'Decimal'>
+    readonly taxFixed: FieldRef<"Profile", 'Decimal'>
+    readonly taxVariable: FieldRef<"Profile", 'Decimal'>
+    readonly createdAt: FieldRef<"Profile", 'DateTime'>
+    readonly updatedAt: FieldRef<"Profile", 'DateTime'>
   }
     
 
   // Custom InputTypes
   /**
-   * User findUnique
+   * Profile findUnique
    */
-  export type UserFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * Filter, which User to fetch.
+     * Filter, which Profile to fetch.
      */
-    where: UserWhereUniqueInput
+    where: ProfileWhereUniqueInput
   }
 
   /**
-   * User findUniqueOrThrow
+   * Profile findUniqueOrThrow
    */
-  export type UserFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * Filter, which User to fetch.
+     * Filter, which Profile to fetch.
      */
-    where: UserWhereUniqueInput
+    where: ProfileWhereUniqueInput
   }
 
   /**
-   * User findFirst
+   * Profile findFirst
    */
-  export type UserFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * Filter, which User to fetch.
+     * Filter, which Profile to fetch.
      */
-    where?: UserWhereInput
+    where?: ProfileWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Users to fetch.
+     * Determine the order of Profiles to fetch.
      */
-    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    orderBy?: ProfileOrderByWithRelationInput | ProfileOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Users.
+     * Sets the position for searching for Profiles.
      */
-    cursor?: UserWhereUniqueInput
+    cursor?: ProfileWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Users from the position of the cursor.
+     * Take `±n` Profiles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Users.
+     * Skip the first `n` Profiles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Users.
+     * Filter by unique combinations of Profiles.
      */
-    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+    distinct?: ProfileScalarFieldEnum | ProfileScalarFieldEnum[]
   }
 
   /**
-   * User findFirstOrThrow
+   * Profile findFirstOrThrow
    */
-  export type UserFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * Filter, which User to fetch.
+     * Filter, which Profile to fetch.
      */
-    where?: UserWhereInput
+    where?: ProfileWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Users to fetch.
+     * Determine the order of Profiles to fetch.
      */
-    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    orderBy?: ProfileOrderByWithRelationInput | ProfileOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Users.
+     * Sets the position for searching for Profiles.
      */
-    cursor?: UserWhereUniqueInput
+    cursor?: ProfileWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Users from the position of the cursor.
+     * Take `±n` Profiles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Users.
+     * Skip the first `n` Profiles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Users.
+     * Filter by unique combinations of Profiles.
      */
-    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+    distinct?: ProfileScalarFieldEnum | ProfileScalarFieldEnum[]
   }
 
   /**
-   * User findMany
+   * Profile findMany
    */
-  export type UserFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * Filter, which Users to fetch.
+     * Filter, which Profiles to fetch.
      */
-    where?: UserWhereInput
+    where?: ProfileWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Users to fetch.
+     * Determine the order of Profiles to fetch.
      */
-    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    orderBy?: ProfileOrderByWithRelationInput | ProfileOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing Users.
+     * Sets the position for listing Profiles.
      */
-    cursor?: UserWhereUniqueInput
+    cursor?: ProfileWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Users from the position of the cursor.
+     * Take `±n` Profiles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Users.
+     * Skip the first `n` Profiles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Users.
+     * Filter by unique combinations of Profiles.
      */
-    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+    distinct?: ProfileScalarFieldEnum | ProfileScalarFieldEnum[]
   }
 
   /**
-   * User create
+   * Profile create
    */
-  export type UserCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * The data needed to create a User.
+     * The data needed to create a Profile.
      */
-    data: XOR<UserCreateInput, UserUncheckedCreateInput>
+    data: XOR<ProfileCreateInput, ProfileUncheckedCreateInput>
   }
 
   /**
-   * User createMany
+   * Profile createMany
    */
-  export type UserCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many Users.
+     * The data used to create many Profiles.
      */
-    data: UserCreateManyInput | UserCreateManyInput[]
+    data: ProfileCreateManyInput | ProfileCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * User createManyAndReturn
+   * Profile createManyAndReturn
    */
-  export type UserCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelectCreateManyAndReturn<ExtArgs> | null
+    select?: ProfileSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
-     * The data used to create many Users.
+     * The data used to create many Profiles.
      */
-    data: UserCreateManyInput | UserCreateManyInput[]
+    data: ProfileCreateManyInput | ProfileCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * User update
+   * Profile update
    */
-  export type UserUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * The data needed to update a User.
+     * The data needed to update a Profile.
      */
-    data: XOR<UserUpdateInput, UserUncheckedUpdateInput>
+    data: XOR<ProfileUpdateInput, ProfileUncheckedUpdateInput>
     /**
-     * Choose, which User to update.
+     * Choose, which Profile to update.
      */
-    where: UserWhereUniqueInput
+    where: ProfileWhereUniqueInput
   }
 
   /**
-   * User updateMany
+   * Profile updateMany
    */
-  export type UserUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update Users.
+     * The data used to update Profiles.
      */
-    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyInput>
+    data: XOR<ProfileUpdateManyMutationInput, ProfileUncheckedUpdateManyInput>
     /**
-     * Filter which Users to update
+     * Filter which Profiles to update
      */
-    where?: UserWhereInput
+    where?: ProfileWhereInput
     /**
-     * Limit how many Users to update.
+     * Limit how many Profiles to update.
      */
     limit?: number
   }
 
   /**
-   * User updateManyAndReturn
+   * Profile updateManyAndReturn
    */
-  export type UserUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelectUpdateManyAndReturn<ExtArgs> | null
+    select?: ProfileSelectUpdateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
-     * The data used to update Users.
+     * The data used to update Profiles.
      */
-    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyInput>
+    data: XOR<ProfileUpdateManyMutationInput, ProfileUncheckedUpdateManyInput>
     /**
-     * Filter which Users to update
+     * Filter which Profiles to update
      */
-    where?: UserWhereInput
+    where?: ProfileWhereInput
     /**
-     * Limit how many Users to update.
+     * Limit how many Profiles to update.
      */
     limit?: number
   }
 
   /**
-   * User upsert
+   * Profile upsert
    */
-  export type UserUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * The filter to search for the User to update in case it exists.
+     * The filter to search for the Profile to update in case it exists.
      */
-    where: UserWhereUniqueInput
+    where: ProfileWhereUniqueInput
     /**
-     * In case the User found by the `where` argument doesn't exist, create a new User with this data.
+     * In case the Profile found by the `where` argument doesn't exist, create a new Profile with this data.
      */
-    create: XOR<UserCreateInput, UserUncheckedCreateInput>
+    create: XOR<ProfileCreateInput, ProfileUncheckedCreateInput>
     /**
-     * In case the User was found with the provided `where` argument, update it with this data.
+     * In case the Profile was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<UserUpdateInput, UserUncheckedUpdateInput>
+    update: XOR<ProfileUpdateInput, ProfileUncheckedUpdateInput>
   }
 
   /**
-   * User delete
+   * Profile delete
    */
-  export type UserDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the Profile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the Profile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
     /**
-     * Filter which User to delete.
+     * Filter which Profile to delete.
      */
-    where: UserWhereUniqueInput
+    where: ProfileWhereUniqueInput
   }
 
   /**
-   * User deleteMany
+   * Profile deleteMany
    */
-  export type UserDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which Users to delete
+     * Filter which Profiles to delete
      */
-    where?: UserWhereInput
+    where?: ProfileWhereInput
     /**
-     * Limit how many Users to delete.
+     * Limit how many Profiles to delete.
      */
     limit?: number
   }
 
   /**
-   * User.transactions
+   * Profile.transactions
    */
-  export type User$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Profile$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Transaction
      */
@@ -2265,69 +2141,21 @@ export namespace Prisma {
   }
 
   /**
-   * User.breakevens
+   * Profile without action
    */
-  export type User$breakevensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Breakeven
+     * Select specific fields to fetch from the Profile
      */
-    select?: BreakevenSelect<ExtArgs> | null
+    select?: ProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Breakeven
+     * Omit specific fields from the Profile
      */
-    omit?: BreakevenOmit<ExtArgs> | null
+    omit?: ProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: BreakevenInclude<ExtArgs> | null
-    where?: BreakevenWhereInput
-    orderBy?: BreakevenOrderByWithRelationInput | BreakevenOrderByWithRelationInput[]
-    cursor?: BreakevenWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: BreakevenScalarFieldEnum | BreakevenScalarFieldEnum[]
-  }
-
-  /**
-   * User.projections
-   */
-  export type User$projectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    where?: ProjectionWhereInput
-    orderBy?: ProjectionOrderByWithRelationInput | ProjectionOrderByWithRelationInput[]
-    cursor?: ProjectionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ProjectionScalarFieldEnum | ProjectionScalarFieldEnum[]
-  }
-
-  /**
-   * User without action
-   */
-  export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
+    include?: ProfileInclude<ExtArgs> | null
   }
 
 
@@ -2344,99 +2172,97 @@ export namespace Prisma {
   }
 
   export type TransactionAvgAggregateOutputType = {
-    amount: number | null
+    amount: Decimal | null
+    quantity: number | null
   }
 
   export type TransactionSumAggregateOutputType = {
-    amount: number | null
+    amount: Decimal | null
+    quantity: number | null
   }
 
   export type TransactionMinAggregateOutputType = {
     id: string | null
-    userId: string | null
-    amount: number | null
-    currency: string | null
-    type: string | null
-    category: string | null
-    description: string | null
-    date: Date | null
+    profileId: string | null
+    amount: Decimal | null
+    type: $Enums.TransactionType | null
+    concept: string | null
+    quantity: number | null
+    isFixed: boolean | null
+    isBusiness: boolean | null
     createdAt: Date | null
-    updatedAt: Date | null
   }
 
   export type TransactionMaxAggregateOutputType = {
     id: string | null
-    userId: string | null
-    amount: number | null
-    currency: string | null
-    type: string | null
-    category: string | null
-    description: string | null
-    date: Date | null
+    profileId: string | null
+    amount: Decimal | null
+    type: $Enums.TransactionType | null
+    concept: string | null
+    quantity: number | null
+    isFixed: boolean | null
+    isBusiness: boolean | null
     createdAt: Date | null
-    updatedAt: Date | null
   }
 
   export type TransactionCountAggregateOutputType = {
     id: number
-    userId: number
+    profileId: number
     amount: number
-    currency: number
     type: number
-    category: number
-    description: number
-    date: number
+    concept: number
+    quantity: number
+    isFixed: number
+    isBusiness: number
     createdAt: number
-    updatedAt: number
     _all: number
   }
 
 
   export type TransactionAvgAggregateInputType = {
     amount?: true
+    quantity?: true
   }
 
   export type TransactionSumAggregateInputType = {
     amount?: true
+    quantity?: true
   }
 
   export type TransactionMinAggregateInputType = {
     id?: true
-    userId?: true
+    profileId?: true
     amount?: true
-    currency?: true
     type?: true
-    category?: true
-    description?: true
-    date?: true
+    concept?: true
+    quantity?: true
+    isFixed?: true
+    isBusiness?: true
     createdAt?: true
-    updatedAt?: true
   }
 
   export type TransactionMaxAggregateInputType = {
     id?: true
-    userId?: true
+    profileId?: true
     amount?: true
-    currency?: true
     type?: true
-    category?: true
-    description?: true
-    date?: true
+    concept?: true
+    quantity?: true
+    isFixed?: true
+    isBusiness?: true
     createdAt?: true
-    updatedAt?: true
   }
 
   export type TransactionCountAggregateInputType = {
     id?: true
-    userId?: true
+    profileId?: true
     amount?: true
-    currency?: true
     type?: true
-    category?: true
-    description?: true
-    date?: true
+    concept?: true
+    quantity?: true
+    isFixed?: true
+    isBusiness?: true
     createdAt?: true
-    updatedAt?: true
     _all?: true
   }
 
@@ -2528,15 +2354,14 @@ export namespace Prisma {
 
   export type TransactionGroupByOutputType = {
     id: string
-    userId: string
-    amount: number
-    currency: string
-    type: string
-    category: string
-    description: string
-    date: Date
+    profileId: string
+    amount: Decimal
+    type: $Enums.TransactionType
+    concept: string
+    quantity: number
+    isFixed: boolean
+    isBusiness: boolean
     createdAt: Date
-    updatedAt: Date
     _count: TransactionCountAggregateOutputType | null
     _avg: TransactionAvgAggregateOutputType | null
     _sum: TransactionSumAggregateOutputType | null
@@ -2560,86 +2385,99 @@ export namespace Prisma {
 
   export type TransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
+    profileId?: boolean
     amount?: boolean
-    currency?: boolean
     type?: boolean
-    category?: boolean
-    description?: boolean
-    date?: boolean
+    concept?: boolean
+    quantity?: boolean
+    isFixed?: boolean
+    isBusiness?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
+    profileId?: boolean
     amount?: boolean
-    currency?: boolean
     type?: boolean
-    category?: boolean
-    description?: boolean
-    date?: boolean
+    concept?: boolean
+    quantity?: boolean
+    isFixed?: boolean
+    isBusiness?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
+    profileId?: boolean
     amount?: boolean
-    currency?: boolean
     type?: boolean
-    category?: boolean
-    description?: boolean
-    date?: boolean
+    concept?: boolean
+    quantity?: boolean
+    isFixed?: boolean
+    isBusiness?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectScalar = {
     id?: boolean
-    userId?: boolean
+    profileId?: boolean
     amount?: boolean
-    currency?: boolean
     type?: boolean
-    category?: boolean
-    description?: boolean
-    date?: boolean
+    concept?: boolean
+    quantity?: boolean
+    isFixed?: boolean
+    isBusiness?: boolean
     createdAt?: boolean
-    updatedAt?: boolean
   }
 
-  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "currency" | "type" | "category" | "description" | "date" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "profileId" | "amount" | "type" | "concept" | "quantity" | "isFixed" | "isBusiness" | "createdAt", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }
   export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }
 
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Transaction"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
+      profile: Prisma.$ProfilePayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      userId: string
-      amount: number
-      currency: string
-      type: string
-      category: string
-      description: string
-      date: Date
+      profileId: string
+      /**
+       * Monto absoluto de la operación — siempre positivo
+       */
+      amount: Prisma.Decimal
+      /**
+       * Tipo: INCOME o EXPENSE
+       */
+      type: $Enums.TransactionType
+      /**
+       * Concepto descriptivo libre
+       */
+      concept: string
+      /**
+       * Volumen de la operación (unidades vendidas/compradas)
+       */
+      quantity: number
+      /**
+       * Dimensión de Comportamiento: true = Costo Fijo, false = Costo Variable
+       */
+      isFixed: boolean
+      /**
+       * Dimensión de Pertenencia: true = Negocio, false = Personal
+       */
+      isBusiness: boolean
       createdAt: Date
-      updatedAt: Date
     }, ExtArgs["result"]["transaction"]>
     composites: {}
   }
@@ -3034,7 +2872,7 @@ export namespace Prisma {
    */
   export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    profile<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3065,15 +2903,14 @@ export namespace Prisma {
    */
   interface TransactionFieldRefs {
     readonly id: FieldRef<"Transaction", 'String'>
-    readonly userId: FieldRef<"Transaction", 'String'>
-    readonly amount: FieldRef<"Transaction", 'Float'>
-    readonly currency: FieldRef<"Transaction", 'String'>
-    readonly type: FieldRef<"Transaction", 'String'>
-    readonly category: FieldRef<"Transaction", 'String'>
-    readonly description: FieldRef<"Transaction", 'String'>
-    readonly date: FieldRef<"Transaction", 'DateTime'>
+    readonly profileId: FieldRef<"Transaction", 'String'>
+    readonly amount: FieldRef<"Transaction", 'Decimal'>
+    readonly type: FieldRef<"Transaction", 'TransactionType'>
+    readonly concept: FieldRef<"Transaction", 'String'>
+    readonly quantity: FieldRef<"Transaction", 'Int'>
+    readonly isFixed: FieldRef<"Transaction", 'Boolean'>
+    readonly isBusiness: FieldRef<"Transaction", 'Boolean'>
     readonly createdAt: FieldRef<"Transaction", 'DateTime'>
-    readonly updatedAt: FieldRef<"Transaction", 'DateTime'>
   }
     
 
@@ -3494,2320 +3331,6 @@ export namespace Prisma {
 
 
   /**
-   * Model Breakeven
-   */
-
-  export type AggregateBreakeven = {
-    _count: BreakevenCountAggregateOutputType | null
-    _avg: BreakevenAvgAggregateOutputType | null
-    _sum: BreakevenSumAggregateOutputType | null
-    _min: BreakevenMinAggregateOutputType | null
-    _max: BreakevenMaxAggregateOutputType | null
-  }
-
-  export type BreakevenAvgAggregateOutputType = {
-    fixedCosts: number | null
-    variableCostPerUnit: number | null
-    pricePerUnit: number | null
-  }
-
-  export type BreakevenSumAggregateOutputType = {
-    fixedCosts: number | null
-    variableCostPerUnit: number | null
-    pricePerUnit: number | null
-  }
-
-  export type BreakevenMinAggregateOutputType = {
-    id: string | null
-    userId: string | null
-    name: string | null
-    fixedCosts: number | null
-    variableCostPerUnit: number | null
-    pricePerUnit: number | null
-    currency: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type BreakevenMaxAggregateOutputType = {
-    id: string | null
-    userId: string | null
-    name: string | null
-    fixedCosts: number | null
-    variableCostPerUnit: number | null
-    pricePerUnit: number | null
-    currency: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type BreakevenCountAggregateOutputType = {
-    id: number
-    userId: number
-    name: number
-    fixedCosts: number
-    variableCostPerUnit: number
-    pricePerUnit: number
-    currency: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type BreakevenAvgAggregateInputType = {
-    fixedCosts?: true
-    variableCostPerUnit?: true
-    pricePerUnit?: true
-  }
-
-  export type BreakevenSumAggregateInputType = {
-    fixedCosts?: true
-    variableCostPerUnit?: true
-    pricePerUnit?: true
-  }
-
-  export type BreakevenMinAggregateInputType = {
-    id?: true
-    userId?: true
-    name?: true
-    fixedCosts?: true
-    variableCostPerUnit?: true
-    pricePerUnit?: true
-    currency?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type BreakevenMaxAggregateInputType = {
-    id?: true
-    userId?: true
-    name?: true
-    fixedCosts?: true
-    variableCostPerUnit?: true
-    pricePerUnit?: true
-    currency?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type BreakevenCountAggregateInputType = {
-    id?: true
-    userId?: true
-    name?: true
-    fixedCosts?: true
-    variableCostPerUnit?: true
-    pricePerUnit?: true
-    currency?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type BreakevenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Breakeven to aggregate.
-     */
-    where?: BreakevenWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Breakevens to fetch.
-     */
-    orderBy?: BreakevenOrderByWithRelationInput | BreakevenOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: BreakevenWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Breakevens from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Breakevens.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Breakevens
-    **/
-    _count?: true | BreakevenCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: BreakevenAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: BreakevenSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: BreakevenMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: BreakevenMaxAggregateInputType
-  }
-
-  export type GetBreakevenAggregateType<T extends BreakevenAggregateArgs> = {
-        [P in keyof T & keyof AggregateBreakeven]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateBreakeven[P]>
-      : GetScalarType<T[P], AggregateBreakeven[P]>
-  }
-
-
-
-
-  export type BreakevenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BreakevenWhereInput
-    orderBy?: BreakevenOrderByWithAggregationInput | BreakevenOrderByWithAggregationInput[]
-    by: BreakevenScalarFieldEnum[] | BreakevenScalarFieldEnum
-    having?: BreakevenScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: BreakevenCountAggregateInputType | true
-    _avg?: BreakevenAvgAggregateInputType
-    _sum?: BreakevenSumAggregateInputType
-    _min?: BreakevenMinAggregateInputType
-    _max?: BreakevenMaxAggregateInputType
-  }
-
-  export type BreakevenGroupByOutputType = {
-    id: string
-    userId: string
-    name: string
-    fixedCosts: number
-    variableCostPerUnit: number
-    pricePerUnit: number
-    currency: string
-    createdAt: Date
-    updatedAt: Date
-    _count: BreakevenCountAggregateOutputType | null
-    _avg: BreakevenAvgAggregateOutputType | null
-    _sum: BreakevenSumAggregateOutputType | null
-    _min: BreakevenMinAggregateOutputType | null
-    _max: BreakevenMaxAggregateOutputType | null
-  }
-
-  type GetBreakevenGroupByPayload<T extends BreakevenGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<BreakevenGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof BreakevenGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], BreakevenGroupByOutputType[P]>
-            : GetScalarType<T[P], BreakevenGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type BreakevenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    name?: boolean
-    fixedCosts?: boolean
-    variableCostPerUnit?: boolean
-    pricePerUnit?: boolean
-    currency?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["breakeven"]>
-
-  export type BreakevenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    name?: boolean
-    fixedCosts?: boolean
-    variableCostPerUnit?: boolean
-    pricePerUnit?: boolean
-    currency?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["breakeven"]>
-
-  export type BreakevenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    name?: boolean
-    fixedCosts?: boolean
-    variableCostPerUnit?: boolean
-    pricePerUnit?: boolean
-    currency?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["breakeven"]>
-
-  export type BreakevenSelectScalar = {
-    id?: boolean
-    userId?: boolean
-    name?: boolean
-    fixedCosts?: boolean
-    variableCostPerUnit?: boolean
-    pricePerUnit?: boolean
-    currency?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type BreakevenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "fixedCosts" | "variableCostPerUnit" | "pricePerUnit" | "currency" | "createdAt" | "updatedAt", ExtArgs["result"]["breakeven"]>
-  export type BreakevenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type BreakevenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type BreakevenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $BreakevenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Breakeven"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      userId: string
-      name: string
-      fixedCosts: number
-      variableCostPerUnit: number
-      pricePerUnit: number
-      currency: string
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["breakeven"]>
-    composites: {}
-  }
-
-  type BreakevenGetPayload<S extends boolean | null | undefined | BreakevenDefaultArgs> = $Result.GetResult<Prisma.$BreakevenPayload, S>
-
-  type BreakevenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<BreakevenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: BreakevenCountAggregateInputType | true
-    }
-
-  export interface BreakevenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Breakeven'], meta: { name: 'Breakeven' } }
-    /**
-     * Find zero or one Breakeven that matches the filter.
-     * @param {BreakevenFindUniqueArgs} args - Arguments to find a Breakeven
-     * @example
-     * // Get one Breakeven
-     * const breakeven = await prisma.breakeven.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends BreakevenFindUniqueArgs>(args: SelectSubset<T, BreakevenFindUniqueArgs<ExtArgs>>): Prisma__BreakevenClient<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Breakeven that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {BreakevenFindUniqueOrThrowArgs} args - Arguments to find a Breakeven
-     * @example
-     * // Get one Breakeven
-     * const breakeven = await prisma.breakeven.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends BreakevenFindUniqueOrThrowArgs>(args: SelectSubset<T, BreakevenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BreakevenClient<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Breakeven that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BreakevenFindFirstArgs} args - Arguments to find a Breakeven
-     * @example
-     * // Get one Breakeven
-     * const breakeven = await prisma.breakeven.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends BreakevenFindFirstArgs>(args?: SelectSubset<T, BreakevenFindFirstArgs<ExtArgs>>): Prisma__BreakevenClient<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Breakeven that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BreakevenFindFirstOrThrowArgs} args - Arguments to find a Breakeven
-     * @example
-     * // Get one Breakeven
-     * const breakeven = await prisma.breakeven.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends BreakevenFindFirstOrThrowArgs>(args?: SelectSubset<T, BreakevenFindFirstOrThrowArgs<ExtArgs>>): Prisma__BreakevenClient<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Breakevens that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BreakevenFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Breakevens
-     * const breakevens = await prisma.breakeven.findMany()
-     * 
-     * // Get first 10 Breakevens
-     * const breakevens = await prisma.breakeven.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const breakevenWithIdOnly = await prisma.breakeven.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends BreakevenFindManyArgs>(args?: SelectSubset<T, BreakevenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Breakeven.
-     * @param {BreakevenCreateArgs} args - Arguments to create a Breakeven.
-     * @example
-     * // Create one Breakeven
-     * const Breakeven = await prisma.breakeven.create({
-     *   data: {
-     *     // ... data to create a Breakeven
-     *   }
-     * })
-     * 
-     */
-    create<T extends BreakevenCreateArgs>(args: SelectSubset<T, BreakevenCreateArgs<ExtArgs>>): Prisma__BreakevenClient<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Breakevens.
-     * @param {BreakevenCreateManyArgs} args - Arguments to create many Breakevens.
-     * @example
-     * // Create many Breakevens
-     * const breakeven = await prisma.breakeven.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends BreakevenCreateManyArgs>(args?: SelectSubset<T, BreakevenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Breakevens and returns the data saved in the database.
-     * @param {BreakevenCreateManyAndReturnArgs} args - Arguments to create many Breakevens.
-     * @example
-     * // Create many Breakevens
-     * const breakeven = await prisma.breakeven.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Breakevens and only return the `id`
-     * const breakevenWithIdOnly = await prisma.breakeven.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends BreakevenCreateManyAndReturnArgs>(args?: SelectSubset<T, BreakevenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Breakeven.
-     * @param {BreakevenDeleteArgs} args - Arguments to delete one Breakeven.
-     * @example
-     * // Delete one Breakeven
-     * const Breakeven = await prisma.breakeven.delete({
-     *   where: {
-     *     // ... filter to delete one Breakeven
-     *   }
-     * })
-     * 
-     */
-    delete<T extends BreakevenDeleteArgs>(args: SelectSubset<T, BreakevenDeleteArgs<ExtArgs>>): Prisma__BreakevenClient<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Breakeven.
-     * @param {BreakevenUpdateArgs} args - Arguments to update one Breakeven.
-     * @example
-     * // Update one Breakeven
-     * const breakeven = await prisma.breakeven.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends BreakevenUpdateArgs>(args: SelectSubset<T, BreakevenUpdateArgs<ExtArgs>>): Prisma__BreakevenClient<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Breakevens.
-     * @param {BreakevenDeleteManyArgs} args - Arguments to filter Breakevens to delete.
-     * @example
-     * // Delete a few Breakevens
-     * const { count } = await prisma.breakeven.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends BreakevenDeleteManyArgs>(args?: SelectSubset<T, BreakevenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Breakevens.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BreakevenUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Breakevens
-     * const breakeven = await prisma.breakeven.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends BreakevenUpdateManyArgs>(args: SelectSubset<T, BreakevenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Breakevens and returns the data updated in the database.
-     * @param {BreakevenUpdateManyAndReturnArgs} args - Arguments to update many Breakevens.
-     * @example
-     * // Update many Breakevens
-     * const breakeven = await prisma.breakeven.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Breakevens and only return the `id`
-     * const breakevenWithIdOnly = await prisma.breakeven.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends BreakevenUpdateManyAndReturnArgs>(args: SelectSubset<T, BreakevenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Breakeven.
-     * @param {BreakevenUpsertArgs} args - Arguments to update or create a Breakeven.
-     * @example
-     * // Update or create a Breakeven
-     * const breakeven = await prisma.breakeven.upsert({
-     *   create: {
-     *     // ... data to create a Breakeven
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Breakeven we want to update
-     *   }
-     * })
-     */
-    upsert<T extends BreakevenUpsertArgs>(args: SelectSubset<T, BreakevenUpsertArgs<ExtArgs>>): Prisma__BreakevenClient<$Result.GetResult<Prisma.$BreakevenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Breakevens.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BreakevenCountArgs} args - Arguments to filter Breakevens to count.
-     * @example
-     * // Count the number of Breakevens
-     * const count = await prisma.breakeven.count({
-     *   where: {
-     *     // ... the filter for the Breakevens we want to count
-     *   }
-     * })
-    **/
-    count<T extends BreakevenCountArgs>(
-      args?: Subset<T, BreakevenCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], BreakevenCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Breakeven.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BreakevenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends BreakevenAggregateArgs>(args: Subset<T, BreakevenAggregateArgs>): Prisma.PrismaPromise<GetBreakevenAggregateType<T>>
-
-    /**
-     * Group by Breakeven.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BreakevenGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends BreakevenGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: BreakevenGroupByArgs['orderBy'] }
-        : { orderBy?: BreakevenGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, BreakevenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBreakevenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Breakeven model
-   */
-  readonly fields: BreakevenFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Breakeven.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__BreakevenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Breakeven model
-   */
-  interface BreakevenFieldRefs {
-    readonly id: FieldRef<"Breakeven", 'String'>
-    readonly userId: FieldRef<"Breakeven", 'String'>
-    readonly name: FieldRef<"Breakeven", 'String'>
-    readonly fixedCosts: FieldRef<"Breakeven", 'Float'>
-    readonly variableCostPerUnit: FieldRef<"Breakeven", 'Float'>
-    readonly pricePerUnit: FieldRef<"Breakeven", 'Float'>
-    readonly currency: FieldRef<"Breakeven", 'String'>
-    readonly createdAt: FieldRef<"Breakeven", 'DateTime'>
-    readonly updatedAt: FieldRef<"Breakeven", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Breakeven findUnique
-   */
-  export type BreakevenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * Filter, which Breakeven to fetch.
-     */
-    where: BreakevenWhereUniqueInput
-  }
-
-  /**
-   * Breakeven findUniqueOrThrow
-   */
-  export type BreakevenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * Filter, which Breakeven to fetch.
-     */
-    where: BreakevenWhereUniqueInput
-  }
-
-  /**
-   * Breakeven findFirst
-   */
-  export type BreakevenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * Filter, which Breakeven to fetch.
-     */
-    where?: BreakevenWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Breakevens to fetch.
-     */
-    orderBy?: BreakevenOrderByWithRelationInput | BreakevenOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Breakevens.
-     */
-    cursor?: BreakevenWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Breakevens from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Breakevens.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Breakevens.
-     */
-    distinct?: BreakevenScalarFieldEnum | BreakevenScalarFieldEnum[]
-  }
-
-  /**
-   * Breakeven findFirstOrThrow
-   */
-  export type BreakevenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * Filter, which Breakeven to fetch.
-     */
-    where?: BreakevenWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Breakevens to fetch.
-     */
-    orderBy?: BreakevenOrderByWithRelationInput | BreakevenOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Breakevens.
-     */
-    cursor?: BreakevenWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Breakevens from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Breakevens.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Breakevens.
-     */
-    distinct?: BreakevenScalarFieldEnum | BreakevenScalarFieldEnum[]
-  }
-
-  /**
-   * Breakeven findMany
-   */
-  export type BreakevenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * Filter, which Breakevens to fetch.
-     */
-    where?: BreakevenWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Breakevens to fetch.
-     */
-    orderBy?: BreakevenOrderByWithRelationInput | BreakevenOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Breakevens.
-     */
-    cursor?: BreakevenWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Breakevens from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Breakevens.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Breakevens.
-     */
-    distinct?: BreakevenScalarFieldEnum | BreakevenScalarFieldEnum[]
-  }
-
-  /**
-   * Breakeven create
-   */
-  export type BreakevenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Breakeven.
-     */
-    data: XOR<BreakevenCreateInput, BreakevenUncheckedCreateInput>
-  }
-
-  /**
-   * Breakeven createMany
-   */
-  export type BreakevenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Breakevens.
-     */
-    data: BreakevenCreateManyInput | BreakevenCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Breakeven createManyAndReturn
-   */
-  export type BreakevenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * The data used to create many Breakevens.
-     */
-    data: BreakevenCreateManyInput | BreakevenCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Breakeven update
-   */
-  export type BreakevenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Breakeven.
-     */
-    data: XOR<BreakevenUpdateInput, BreakevenUncheckedUpdateInput>
-    /**
-     * Choose, which Breakeven to update.
-     */
-    where: BreakevenWhereUniqueInput
-  }
-
-  /**
-   * Breakeven updateMany
-   */
-  export type BreakevenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Breakevens.
-     */
-    data: XOR<BreakevenUpdateManyMutationInput, BreakevenUncheckedUpdateManyInput>
-    /**
-     * Filter which Breakevens to update
-     */
-    where?: BreakevenWhereInput
-    /**
-     * Limit how many Breakevens to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Breakeven updateManyAndReturn
-   */
-  export type BreakevenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * The data used to update Breakevens.
-     */
-    data: XOR<BreakevenUpdateManyMutationInput, BreakevenUncheckedUpdateManyInput>
-    /**
-     * Filter which Breakevens to update
-     */
-    where?: BreakevenWhereInput
-    /**
-     * Limit how many Breakevens to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Breakeven upsert
-   */
-  export type BreakevenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Breakeven to update in case it exists.
-     */
-    where: BreakevenWhereUniqueInput
-    /**
-     * In case the Breakeven found by the `where` argument doesn't exist, create a new Breakeven with this data.
-     */
-    create: XOR<BreakevenCreateInput, BreakevenUncheckedCreateInput>
-    /**
-     * In case the Breakeven was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<BreakevenUpdateInput, BreakevenUncheckedUpdateInput>
-  }
-
-  /**
-   * Breakeven delete
-   */
-  export type BreakevenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-    /**
-     * Filter which Breakeven to delete.
-     */
-    where: BreakevenWhereUniqueInput
-  }
-
-  /**
-   * Breakeven deleteMany
-   */
-  export type BreakevenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Breakevens to delete
-     */
-    where?: BreakevenWhereInput
-    /**
-     * Limit how many Breakevens to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Breakeven without action
-   */
-  export type BreakevenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Breakeven
-     */
-    select?: BreakevenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Breakeven
-     */
-    omit?: BreakevenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BreakevenInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Projection
-   */
-
-  export type AggregateProjection = {
-    _count: ProjectionCountAggregateOutputType | null
-    _avg: ProjectionAvgAggregateOutputType | null
-    _sum: ProjectionSumAggregateOutputType | null
-    _min: ProjectionMinAggregateOutputType | null
-    _max: ProjectionMaxAggregateOutputType | null
-  }
-
-  export type ProjectionAvgAggregateOutputType = {
-    monthlyRevenue: number | null
-    growthRate: number | null
-    months: number | null
-  }
-
-  export type ProjectionSumAggregateOutputType = {
-    monthlyRevenue: number | null
-    growthRate: number | null
-    months: number | null
-  }
-
-  export type ProjectionMinAggregateOutputType = {
-    id: string | null
-    userId: string | null
-    name: string | null
-    monthlyRevenue: number | null
-    growthRate: number | null
-    months: number | null
-    currency: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type ProjectionMaxAggregateOutputType = {
-    id: string | null
-    userId: string | null
-    name: string | null
-    monthlyRevenue: number | null
-    growthRate: number | null
-    months: number | null
-    currency: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type ProjectionCountAggregateOutputType = {
-    id: number
-    userId: number
-    name: number
-    monthlyRevenue: number
-    growthRate: number
-    months: number
-    currency: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type ProjectionAvgAggregateInputType = {
-    monthlyRevenue?: true
-    growthRate?: true
-    months?: true
-  }
-
-  export type ProjectionSumAggregateInputType = {
-    monthlyRevenue?: true
-    growthRate?: true
-    months?: true
-  }
-
-  export type ProjectionMinAggregateInputType = {
-    id?: true
-    userId?: true
-    name?: true
-    monthlyRevenue?: true
-    growthRate?: true
-    months?: true
-    currency?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type ProjectionMaxAggregateInputType = {
-    id?: true
-    userId?: true
-    name?: true
-    monthlyRevenue?: true
-    growthRate?: true
-    months?: true
-    currency?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type ProjectionCountAggregateInputType = {
-    id?: true
-    userId?: true
-    name?: true
-    monthlyRevenue?: true
-    growthRate?: true
-    months?: true
-    currency?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type ProjectionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Projection to aggregate.
-     */
-    where?: ProjectionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Projections to fetch.
-     */
-    orderBy?: ProjectionOrderByWithRelationInput | ProjectionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: ProjectionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Projections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Projections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Projections
-    **/
-    _count?: true | ProjectionCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: ProjectionAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: ProjectionSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: ProjectionMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: ProjectionMaxAggregateInputType
-  }
-
-  export type GetProjectionAggregateType<T extends ProjectionAggregateArgs> = {
-        [P in keyof T & keyof AggregateProjection]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateProjection[P]>
-      : GetScalarType<T[P], AggregateProjection[P]>
-  }
-
-
-
-
-  export type ProjectionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ProjectionWhereInput
-    orderBy?: ProjectionOrderByWithAggregationInput | ProjectionOrderByWithAggregationInput[]
-    by: ProjectionScalarFieldEnum[] | ProjectionScalarFieldEnum
-    having?: ProjectionScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: ProjectionCountAggregateInputType | true
-    _avg?: ProjectionAvgAggregateInputType
-    _sum?: ProjectionSumAggregateInputType
-    _min?: ProjectionMinAggregateInputType
-    _max?: ProjectionMaxAggregateInputType
-  }
-
-  export type ProjectionGroupByOutputType = {
-    id: string
-    userId: string
-    name: string
-    monthlyRevenue: number
-    growthRate: number
-    months: number
-    currency: string
-    createdAt: Date
-    updatedAt: Date
-    _count: ProjectionCountAggregateOutputType | null
-    _avg: ProjectionAvgAggregateOutputType | null
-    _sum: ProjectionSumAggregateOutputType | null
-    _min: ProjectionMinAggregateOutputType | null
-    _max: ProjectionMaxAggregateOutputType | null
-  }
-
-  type GetProjectionGroupByPayload<T extends ProjectionGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<ProjectionGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof ProjectionGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], ProjectionGroupByOutputType[P]>
-            : GetScalarType<T[P], ProjectionGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type ProjectionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    name?: boolean
-    monthlyRevenue?: boolean
-    growthRate?: boolean
-    months?: boolean
-    currency?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["projection"]>
-
-  export type ProjectionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    name?: boolean
-    monthlyRevenue?: boolean
-    growthRate?: boolean
-    months?: boolean
-    currency?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["projection"]>
-
-  export type ProjectionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    name?: boolean
-    monthlyRevenue?: boolean
-    growthRate?: boolean
-    months?: boolean
-    currency?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["projection"]>
-
-  export type ProjectionSelectScalar = {
-    id?: boolean
-    userId?: boolean
-    name?: boolean
-    monthlyRevenue?: boolean
-    growthRate?: boolean
-    months?: boolean
-    currency?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type ProjectionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "monthlyRevenue" | "growthRate" | "months" | "currency" | "createdAt" | "updatedAt", ExtArgs["result"]["projection"]>
-  export type ProjectionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type ProjectionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type ProjectionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $ProjectionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Projection"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      userId: string
-      name: string
-      monthlyRevenue: number
-      growthRate: number
-      months: number
-      currency: string
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["projection"]>
-    composites: {}
-  }
-
-  type ProjectionGetPayload<S extends boolean | null | undefined | ProjectionDefaultArgs> = $Result.GetResult<Prisma.$ProjectionPayload, S>
-
-  type ProjectionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<ProjectionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: ProjectionCountAggregateInputType | true
-    }
-
-  export interface ProjectionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Projection'], meta: { name: 'Projection' } }
-    /**
-     * Find zero or one Projection that matches the filter.
-     * @param {ProjectionFindUniqueArgs} args - Arguments to find a Projection
-     * @example
-     * // Get one Projection
-     * const projection = await prisma.projection.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends ProjectionFindUniqueArgs>(args: SelectSubset<T, ProjectionFindUniqueArgs<ExtArgs>>): Prisma__ProjectionClient<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Projection that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {ProjectionFindUniqueOrThrowArgs} args - Arguments to find a Projection
-     * @example
-     * // Get one Projection
-     * const projection = await prisma.projection.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends ProjectionFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectionClient<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Projection that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectionFindFirstArgs} args - Arguments to find a Projection
-     * @example
-     * // Get one Projection
-     * const projection = await prisma.projection.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends ProjectionFindFirstArgs>(args?: SelectSubset<T, ProjectionFindFirstArgs<ExtArgs>>): Prisma__ProjectionClient<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Projection that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectionFindFirstOrThrowArgs} args - Arguments to find a Projection
-     * @example
-     * // Get one Projection
-     * const projection = await prisma.projection.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends ProjectionFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectionFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectionClient<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Projections that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectionFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Projections
-     * const projections = await prisma.projection.findMany()
-     * 
-     * // Get first 10 Projections
-     * const projections = await prisma.projection.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const projectionWithIdOnly = await prisma.projection.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends ProjectionFindManyArgs>(args?: SelectSubset<T, ProjectionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Projection.
-     * @param {ProjectionCreateArgs} args - Arguments to create a Projection.
-     * @example
-     * // Create one Projection
-     * const Projection = await prisma.projection.create({
-     *   data: {
-     *     // ... data to create a Projection
-     *   }
-     * })
-     * 
-     */
-    create<T extends ProjectionCreateArgs>(args: SelectSubset<T, ProjectionCreateArgs<ExtArgs>>): Prisma__ProjectionClient<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Projections.
-     * @param {ProjectionCreateManyArgs} args - Arguments to create many Projections.
-     * @example
-     * // Create many Projections
-     * const projection = await prisma.projection.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends ProjectionCreateManyArgs>(args?: SelectSubset<T, ProjectionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Projections and returns the data saved in the database.
-     * @param {ProjectionCreateManyAndReturnArgs} args - Arguments to create many Projections.
-     * @example
-     * // Create many Projections
-     * const projection = await prisma.projection.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Projections and only return the `id`
-     * const projectionWithIdOnly = await prisma.projection.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends ProjectionCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Projection.
-     * @param {ProjectionDeleteArgs} args - Arguments to delete one Projection.
-     * @example
-     * // Delete one Projection
-     * const Projection = await prisma.projection.delete({
-     *   where: {
-     *     // ... filter to delete one Projection
-     *   }
-     * })
-     * 
-     */
-    delete<T extends ProjectionDeleteArgs>(args: SelectSubset<T, ProjectionDeleteArgs<ExtArgs>>): Prisma__ProjectionClient<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Projection.
-     * @param {ProjectionUpdateArgs} args - Arguments to update one Projection.
-     * @example
-     * // Update one Projection
-     * const projection = await prisma.projection.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends ProjectionUpdateArgs>(args: SelectSubset<T, ProjectionUpdateArgs<ExtArgs>>): Prisma__ProjectionClient<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Projections.
-     * @param {ProjectionDeleteManyArgs} args - Arguments to filter Projections to delete.
-     * @example
-     * // Delete a few Projections
-     * const { count } = await prisma.projection.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends ProjectionDeleteManyArgs>(args?: SelectSubset<T, ProjectionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Projections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectionUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Projections
-     * const projection = await prisma.projection.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends ProjectionUpdateManyArgs>(args: SelectSubset<T, ProjectionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Projections and returns the data updated in the database.
-     * @param {ProjectionUpdateManyAndReturnArgs} args - Arguments to update many Projections.
-     * @example
-     * // Update many Projections
-     * const projection = await prisma.projection.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Projections and only return the `id`
-     * const projectionWithIdOnly = await prisma.projection.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends ProjectionUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Projection.
-     * @param {ProjectionUpsertArgs} args - Arguments to update or create a Projection.
-     * @example
-     * // Update or create a Projection
-     * const projection = await prisma.projection.upsert({
-     *   create: {
-     *     // ... data to create a Projection
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Projection we want to update
-     *   }
-     * })
-     */
-    upsert<T extends ProjectionUpsertArgs>(args: SelectSubset<T, ProjectionUpsertArgs<ExtArgs>>): Prisma__ProjectionClient<$Result.GetResult<Prisma.$ProjectionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Projections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectionCountArgs} args - Arguments to filter Projections to count.
-     * @example
-     * // Count the number of Projections
-     * const count = await prisma.projection.count({
-     *   where: {
-     *     // ... the filter for the Projections we want to count
-     *   }
-     * })
-    **/
-    count<T extends ProjectionCountArgs>(
-      args?: Subset<T, ProjectionCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], ProjectionCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Projection.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends ProjectionAggregateArgs>(args: Subset<T, ProjectionAggregateArgs>): Prisma.PrismaPromise<GetProjectionAggregateType<T>>
-
-    /**
-     * Group by Projection.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectionGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends ProjectionGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: ProjectionGroupByArgs['orderBy'] }
-        : { orderBy?: ProjectionGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, ProjectionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Projection model
-   */
-  readonly fields: ProjectionFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Projection.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__ProjectionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Projection model
-   */
-  interface ProjectionFieldRefs {
-    readonly id: FieldRef<"Projection", 'String'>
-    readonly userId: FieldRef<"Projection", 'String'>
-    readonly name: FieldRef<"Projection", 'String'>
-    readonly monthlyRevenue: FieldRef<"Projection", 'Float'>
-    readonly growthRate: FieldRef<"Projection", 'Float'>
-    readonly months: FieldRef<"Projection", 'Int'>
-    readonly currency: FieldRef<"Projection", 'String'>
-    readonly createdAt: FieldRef<"Projection", 'DateTime'>
-    readonly updatedAt: FieldRef<"Projection", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Projection findUnique
-   */
-  export type ProjectionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * Filter, which Projection to fetch.
-     */
-    where: ProjectionWhereUniqueInput
-  }
-
-  /**
-   * Projection findUniqueOrThrow
-   */
-  export type ProjectionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * Filter, which Projection to fetch.
-     */
-    where: ProjectionWhereUniqueInput
-  }
-
-  /**
-   * Projection findFirst
-   */
-  export type ProjectionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * Filter, which Projection to fetch.
-     */
-    where?: ProjectionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Projections to fetch.
-     */
-    orderBy?: ProjectionOrderByWithRelationInput | ProjectionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Projections.
-     */
-    cursor?: ProjectionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Projections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Projections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Projections.
-     */
-    distinct?: ProjectionScalarFieldEnum | ProjectionScalarFieldEnum[]
-  }
-
-  /**
-   * Projection findFirstOrThrow
-   */
-  export type ProjectionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * Filter, which Projection to fetch.
-     */
-    where?: ProjectionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Projections to fetch.
-     */
-    orderBy?: ProjectionOrderByWithRelationInput | ProjectionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Projections.
-     */
-    cursor?: ProjectionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Projections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Projections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Projections.
-     */
-    distinct?: ProjectionScalarFieldEnum | ProjectionScalarFieldEnum[]
-  }
-
-  /**
-   * Projection findMany
-   */
-  export type ProjectionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * Filter, which Projections to fetch.
-     */
-    where?: ProjectionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Projections to fetch.
-     */
-    orderBy?: ProjectionOrderByWithRelationInput | ProjectionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Projections.
-     */
-    cursor?: ProjectionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Projections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Projections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Projections.
-     */
-    distinct?: ProjectionScalarFieldEnum | ProjectionScalarFieldEnum[]
-  }
-
-  /**
-   * Projection create
-   */
-  export type ProjectionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Projection.
-     */
-    data: XOR<ProjectionCreateInput, ProjectionUncheckedCreateInput>
-  }
-
-  /**
-   * Projection createMany
-   */
-  export type ProjectionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Projections.
-     */
-    data: ProjectionCreateManyInput | ProjectionCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Projection createManyAndReturn
-   */
-  export type ProjectionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * The data used to create many Projections.
-     */
-    data: ProjectionCreateManyInput | ProjectionCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Projection update
-   */
-  export type ProjectionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Projection.
-     */
-    data: XOR<ProjectionUpdateInput, ProjectionUncheckedUpdateInput>
-    /**
-     * Choose, which Projection to update.
-     */
-    where: ProjectionWhereUniqueInput
-  }
-
-  /**
-   * Projection updateMany
-   */
-  export type ProjectionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Projections.
-     */
-    data: XOR<ProjectionUpdateManyMutationInput, ProjectionUncheckedUpdateManyInput>
-    /**
-     * Filter which Projections to update
-     */
-    where?: ProjectionWhereInput
-    /**
-     * Limit how many Projections to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Projection updateManyAndReturn
-   */
-  export type ProjectionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * The data used to update Projections.
-     */
-    data: XOR<ProjectionUpdateManyMutationInput, ProjectionUncheckedUpdateManyInput>
-    /**
-     * Filter which Projections to update
-     */
-    where?: ProjectionWhereInput
-    /**
-     * Limit how many Projections to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Projection upsert
-   */
-  export type ProjectionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Projection to update in case it exists.
-     */
-    where: ProjectionWhereUniqueInput
-    /**
-     * In case the Projection found by the `where` argument doesn't exist, create a new Projection with this data.
-     */
-    create: XOR<ProjectionCreateInput, ProjectionUncheckedCreateInput>
-    /**
-     * In case the Projection was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<ProjectionUpdateInput, ProjectionUncheckedUpdateInput>
-  }
-
-  /**
-   * Projection delete
-   */
-  export type ProjectionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-    /**
-     * Filter which Projection to delete.
-     */
-    where: ProjectionWhereUniqueInput
-  }
-
-  /**
-   * Projection deleteMany
-   */
-  export type ProjectionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Projections to delete
-     */
-    where?: ProjectionWhereInput
-    /**
-     * Limit how many Projections to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Projection without action
-   */
-  export type ProjectionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Projection
-     */
-    select?: ProjectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Projection
-     */
-    omit?: ProjectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectionInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Enums
    */
 
@@ -5821,62 +3344,32 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-  export const UserScalarFieldEnum: {
+  export const ProfileScalarFieldEnum: {
     id: 'id',
-    authId: 'authId',
-    email: 'email',
-    name: 'name',
+    authUserId: 'authUserId',
+    targetMargin: 'targetMargin',
+    taxFixed: 'taxFixed',
+    taxVariable: 'taxVariable',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
-  export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+  export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
 
 
   export const TransactionScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
+    profileId: 'profileId',
     amount: 'amount',
-    currency: 'currency',
     type: 'type',
-    category: 'category',
-    description: 'description',
-    date: 'date',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    concept: 'concept',
+    quantity: 'quantity',
+    isFixed: 'isFixed',
+    isBusiness: 'isBusiness',
+    createdAt: 'createdAt'
   };
 
   export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
-
-
-  export const BreakevenScalarFieldEnum: {
-    id: 'id',
-    userId: 'userId',
-    name: 'name',
-    fixedCosts: 'fixedCosts',
-    variableCostPerUnit: 'variableCostPerUnit',
-    pricePerUnit: 'pricePerUnit',
-    currency: 'currency',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type BreakevenScalarFieldEnum = (typeof BreakevenScalarFieldEnum)[keyof typeof BreakevenScalarFieldEnum]
-
-
-  export const ProjectionScalarFieldEnum: {
-    id: 'id',
-    userId: 'userId',
-    name: 'name',
-    monthlyRevenue: 'monthlyRevenue',
-    growthRate: 'growthRate',
-    months: 'months',
-    currency: 'currency',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type ProjectionScalarFieldEnum = (typeof ProjectionScalarFieldEnum)[keyof typeof ProjectionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -5893,14 +3386,6 @@ export namespace Prisma {
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
-  export const NullsOrder: {
-    first: 'first',
-    last: 'last'
-  };
-
-  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -5923,6 +3408,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Decimal'
+   */
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal[]'
+   */
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -5937,16 +3436,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Float'
+   * Reference to a field of type 'TransactionType'
    */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+  export type EnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType'>
     
 
 
   /**
-   * Reference to a field of type 'Float[]'
+   * Reference to a field of type 'TransactionType[]'
    */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+  export type ListEnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType[]'>
     
 
 
@@ -5962,75 +3461,97 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
   /**
    * Deep Input Types
    */
 
 
-  export type UserWhereInput = {
-    AND?: UserWhereInput | UserWhereInput[]
-    OR?: UserWhereInput[]
-    NOT?: UserWhereInput | UserWhereInput[]
-    id?: StringFilter<"User"> | string
-    authId?: StringFilter<"User"> | string
-    email?: StringFilter<"User"> | string
-    name?: StringNullableFilter<"User"> | string | null
-    createdAt?: DateTimeFilter<"User"> | Date | string
-    updatedAt?: DateTimeFilter<"User"> | Date | string
+  export type ProfileWhereInput = {
+    AND?: ProfileWhereInput | ProfileWhereInput[]
+    OR?: ProfileWhereInput[]
+    NOT?: ProfileWhereInput | ProfileWhereInput[]
+    id?: StringFilter<"Profile"> | string
+    authUserId?: StringFilter<"Profile"> | string
+    targetMargin?: DecimalFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"Profile"> | Date | string
+    updatedAt?: DateTimeFilter<"Profile"> | Date | string
     transactions?: TransactionListRelationFilter
-    breakevens?: BreakevenListRelationFilter
-    projections?: ProjectionListRelationFilter
   }
 
-  export type UserOrderByWithRelationInput = {
+  export type ProfileOrderByWithRelationInput = {
     id?: SortOrder
-    authId?: SortOrder
-    email?: SortOrder
-    name?: SortOrderInput | SortOrder
+    authUserId?: SortOrder
+    targetMargin?: SortOrder
+    taxFixed?: SortOrder
+    taxVariable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     transactions?: TransactionOrderByRelationAggregateInput
-    breakevens?: BreakevenOrderByRelationAggregateInput
-    projections?: ProjectionOrderByRelationAggregateInput
   }
 
-  export type UserWhereUniqueInput = Prisma.AtLeast<{
+  export type ProfileWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    authId?: string
-    email?: string
-    AND?: UserWhereInput | UserWhereInput[]
-    OR?: UserWhereInput[]
-    NOT?: UserWhereInput | UserWhereInput[]
-    name?: StringNullableFilter<"User"> | string | null
-    createdAt?: DateTimeFilter<"User"> | Date | string
-    updatedAt?: DateTimeFilter<"User"> | Date | string
+    authUserId?: string
+    AND?: ProfileWhereInput | ProfileWhereInput[]
+    OR?: ProfileWhereInput[]
+    NOT?: ProfileWhereInput | ProfileWhereInput[]
+    targetMargin?: DecimalFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"Profile"> | Date | string
+    updatedAt?: DateTimeFilter<"Profile"> | Date | string
     transactions?: TransactionListRelationFilter
-    breakevens?: BreakevenListRelationFilter
-    projections?: ProjectionListRelationFilter
-  }, "id" | "authId" | "email">
+  }, "id" | "authUserId">
 
-  export type UserOrderByWithAggregationInput = {
+  export type ProfileOrderByWithAggregationInput = {
     id?: SortOrder
-    authId?: SortOrder
-    email?: SortOrder
-    name?: SortOrderInput | SortOrder
+    authUserId?: SortOrder
+    targetMargin?: SortOrder
+    taxFixed?: SortOrder
+    taxVariable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    _count?: UserCountOrderByAggregateInput
-    _max?: UserMaxOrderByAggregateInput
-    _min?: UserMinOrderByAggregateInput
+    _count?: ProfileCountOrderByAggregateInput
+    _avg?: ProfileAvgOrderByAggregateInput
+    _max?: ProfileMaxOrderByAggregateInput
+    _min?: ProfileMinOrderByAggregateInput
+    _sum?: ProfileSumOrderByAggregateInput
   }
 
-  export type UserScalarWhereWithAggregatesInput = {
-    AND?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
-    OR?: UserScalarWhereWithAggregatesInput[]
-    NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"User"> | string
-    authId?: StringWithAggregatesFilter<"User"> | string
-    email?: StringWithAggregatesFilter<"User"> | string
-    name?: StringNullableWithAggregatesFilter<"User"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  export type ProfileScalarWhereWithAggregatesInput = {
+    AND?: ProfileScalarWhereWithAggregatesInput | ProfileScalarWhereWithAggregatesInput[]
+    OR?: ProfileScalarWhereWithAggregatesInput[]
+    NOT?: ProfileScalarWhereWithAggregatesInput | ProfileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Profile"> | string
+    authUserId?: StringWithAggregatesFilter<"Profile"> | string
+    targetMargin?: DecimalWithAggregatesFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalWithAggregatesFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalWithAggregatesFilter<"Profile"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
   }
 
   export type TransactionWhereInput = {
@@ -6038,30 +3559,28 @@ export namespace Prisma {
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
     id?: StringFilter<"Transaction"> | string
-    userId?: StringFilter<"Transaction"> | string
-    amount?: FloatFilter<"Transaction"> | number
-    currency?: StringFilter<"Transaction"> | string
-    type?: StringFilter<"Transaction"> | string
-    category?: StringFilter<"Transaction"> | string
-    description?: StringFilter<"Transaction"> | string
-    date?: DateTimeFilter<"Transaction"> | Date | string
+    profileId?: StringFilter<"Transaction"> | string
+    amount?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
+    concept?: StringFilter<"Transaction"> | string
+    quantity?: IntFilter<"Transaction"> | number
+    isFixed?: BoolFilter<"Transaction"> | boolean
+    isBusiness?: BoolFilter<"Transaction"> | boolean
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
-    updatedAt?: DateTimeFilter<"Transaction"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    profile?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
   }
 
   export type TransactionOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    profileId?: SortOrder
     amount?: SortOrder
-    currency?: SortOrder
     type?: SortOrder
-    category?: SortOrder
-    description?: SortOrder
-    date?: SortOrder
+    concept?: SortOrder
+    quantity?: SortOrder
+    isFixed?: SortOrder
+    isBusiness?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
-    user?: UserOrderByWithRelationInput
+    profile?: ProfileOrderByWithRelationInput
   }
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
@@ -6069,29 +3588,27 @@ export namespace Prisma {
     AND?: TransactionWhereInput | TransactionWhereInput[]
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
-    userId?: StringFilter<"Transaction"> | string
-    amount?: FloatFilter<"Transaction"> | number
-    currency?: StringFilter<"Transaction"> | string
-    type?: StringFilter<"Transaction"> | string
-    category?: StringFilter<"Transaction"> | string
-    description?: StringFilter<"Transaction"> | string
-    date?: DateTimeFilter<"Transaction"> | Date | string
+    profileId?: StringFilter<"Transaction"> | string
+    amount?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
+    concept?: StringFilter<"Transaction"> | string
+    quantity?: IntFilter<"Transaction"> | number
+    isFixed?: BoolFilter<"Transaction"> | boolean
+    isBusiness?: BoolFilter<"Transaction"> | boolean
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
-    updatedAt?: DateTimeFilter<"Transaction"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    profile?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
   }, "id">
 
   export type TransactionOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    profileId?: SortOrder
     amount?: SortOrder
-    currency?: SortOrder
     type?: SortOrder
-    category?: SortOrder
-    description?: SortOrder
-    date?: SortOrder
+    concept?: SortOrder
+    quantity?: SortOrder
+    isFixed?: SortOrder
+    isBusiness?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
     _count?: TransactionCountOrderByAggregateInput
     _avg?: TransactionAvgOrderByAggregateInput
     _max?: TransactionMaxOrderByAggregateInput
@@ -6104,500 +3621,171 @@ export namespace Prisma {
     OR?: TransactionScalarWhereWithAggregatesInput[]
     NOT?: TransactionScalarWhereWithAggregatesInput | TransactionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Transaction"> | string
-    userId?: StringWithAggregatesFilter<"Transaction"> | string
-    amount?: FloatWithAggregatesFilter<"Transaction"> | number
-    currency?: StringWithAggregatesFilter<"Transaction"> | string
-    type?: StringWithAggregatesFilter<"Transaction"> | string
-    category?: StringWithAggregatesFilter<"Transaction"> | string
-    description?: StringWithAggregatesFilter<"Transaction"> | string
-    date?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
+    profileId?: StringWithAggregatesFilter<"Transaction"> | string
+    amount?: DecimalWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeWithAggregatesFilter<"Transaction"> | $Enums.TransactionType
+    concept?: StringWithAggregatesFilter<"Transaction"> | string
+    quantity?: IntWithAggregatesFilter<"Transaction"> | number
+    isFixed?: BoolWithAggregatesFilter<"Transaction"> | boolean
+    isBusiness?: BoolWithAggregatesFilter<"Transaction"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
   }
 
-  export type BreakevenWhereInput = {
-    AND?: BreakevenWhereInput | BreakevenWhereInput[]
-    OR?: BreakevenWhereInput[]
-    NOT?: BreakevenWhereInput | BreakevenWhereInput[]
-    id?: StringFilter<"Breakeven"> | string
-    userId?: StringFilter<"Breakeven"> | string
-    name?: StringFilter<"Breakeven"> | string
-    fixedCosts?: FloatFilter<"Breakeven"> | number
-    variableCostPerUnit?: FloatFilter<"Breakeven"> | number
-    pricePerUnit?: FloatFilter<"Breakeven"> | number
-    currency?: StringFilter<"Breakeven"> | string
-    createdAt?: DateTimeFilter<"Breakeven"> | Date | string
-    updatedAt?: DateTimeFilter<"Breakeven"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }
-
-  export type BreakevenOrderByWithRelationInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    fixedCosts?: SortOrder
-    variableCostPerUnit?: SortOrder
-    pricePerUnit?: SortOrder
-    currency?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    user?: UserOrderByWithRelationInput
-  }
-
-  export type BreakevenWhereUniqueInput = Prisma.AtLeast<{
+  export type ProfileCreateInput = {
     id?: string
-    AND?: BreakevenWhereInput | BreakevenWhereInput[]
-    OR?: BreakevenWhereInput[]
-    NOT?: BreakevenWhereInput | BreakevenWhereInput[]
-    userId?: StringFilter<"Breakeven"> | string
-    name?: StringFilter<"Breakeven"> | string
-    fixedCosts?: FloatFilter<"Breakeven"> | number
-    variableCostPerUnit?: FloatFilter<"Breakeven"> | number
-    pricePerUnit?: FloatFilter<"Breakeven"> | number
-    currency?: StringFilter<"Breakeven"> | string
-    createdAt?: DateTimeFilter<"Breakeven"> | Date | string
-    updatedAt?: DateTimeFilter<"Breakeven"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
-
-  export type BreakevenOrderByWithAggregationInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    fixedCosts?: SortOrder
-    variableCostPerUnit?: SortOrder
-    pricePerUnit?: SortOrder
-    currency?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: BreakevenCountOrderByAggregateInput
-    _avg?: BreakevenAvgOrderByAggregateInput
-    _max?: BreakevenMaxOrderByAggregateInput
-    _min?: BreakevenMinOrderByAggregateInput
-    _sum?: BreakevenSumOrderByAggregateInput
-  }
-
-  export type BreakevenScalarWhereWithAggregatesInput = {
-    AND?: BreakevenScalarWhereWithAggregatesInput | BreakevenScalarWhereWithAggregatesInput[]
-    OR?: BreakevenScalarWhereWithAggregatesInput[]
-    NOT?: BreakevenScalarWhereWithAggregatesInput | BreakevenScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Breakeven"> | string
-    userId?: StringWithAggregatesFilter<"Breakeven"> | string
-    name?: StringWithAggregatesFilter<"Breakeven"> | string
-    fixedCosts?: FloatWithAggregatesFilter<"Breakeven"> | number
-    variableCostPerUnit?: FloatWithAggregatesFilter<"Breakeven"> | number
-    pricePerUnit?: FloatWithAggregatesFilter<"Breakeven"> | number
-    currency?: StringWithAggregatesFilter<"Breakeven"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"Breakeven"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Breakeven"> | Date | string
-  }
-
-  export type ProjectionWhereInput = {
-    AND?: ProjectionWhereInput | ProjectionWhereInput[]
-    OR?: ProjectionWhereInput[]
-    NOT?: ProjectionWhereInput | ProjectionWhereInput[]
-    id?: StringFilter<"Projection"> | string
-    userId?: StringFilter<"Projection"> | string
-    name?: StringFilter<"Projection"> | string
-    monthlyRevenue?: FloatFilter<"Projection"> | number
-    growthRate?: FloatFilter<"Projection"> | number
-    months?: IntFilter<"Projection"> | number
-    currency?: StringFilter<"Projection"> | string
-    createdAt?: DateTimeFilter<"Projection"> | Date | string
-    updatedAt?: DateTimeFilter<"Projection"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }
-
-  export type ProjectionOrderByWithRelationInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    monthlyRevenue?: SortOrder
-    growthRate?: SortOrder
-    months?: SortOrder
-    currency?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    user?: UserOrderByWithRelationInput
-  }
-
-  export type ProjectionWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: ProjectionWhereInput | ProjectionWhereInput[]
-    OR?: ProjectionWhereInput[]
-    NOT?: ProjectionWhereInput | ProjectionWhereInput[]
-    userId?: StringFilter<"Projection"> | string
-    name?: StringFilter<"Projection"> | string
-    monthlyRevenue?: FloatFilter<"Projection"> | number
-    growthRate?: FloatFilter<"Projection"> | number
-    months?: IntFilter<"Projection"> | number
-    currency?: StringFilter<"Projection"> | string
-    createdAt?: DateTimeFilter<"Projection"> | Date | string
-    updatedAt?: DateTimeFilter<"Projection"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
-
-  export type ProjectionOrderByWithAggregationInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    monthlyRevenue?: SortOrder
-    growthRate?: SortOrder
-    months?: SortOrder
-    currency?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: ProjectionCountOrderByAggregateInput
-    _avg?: ProjectionAvgOrderByAggregateInput
-    _max?: ProjectionMaxOrderByAggregateInput
-    _min?: ProjectionMinOrderByAggregateInput
-    _sum?: ProjectionSumOrderByAggregateInput
-  }
-
-  export type ProjectionScalarWhereWithAggregatesInput = {
-    AND?: ProjectionScalarWhereWithAggregatesInput | ProjectionScalarWhereWithAggregatesInput[]
-    OR?: ProjectionScalarWhereWithAggregatesInput[]
-    NOT?: ProjectionScalarWhereWithAggregatesInput | ProjectionScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Projection"> | string
-    userId?: StringWithAggregatesFilter<"Projection"> | string
-    name?: StringWithAggregatesFilter<"Projection"> | string
-    monthlyRevenue?: FloatWithAggregatesFilter<"Projection"> | number
-    growthRate?: FloatWithAggregatesFilter<"Projection"> | number
-    months?: IntWithAggregatesFilter<"Projection"> | number
-    currency?: StringWithAggregatesFilter<"Projection"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"Projection"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Projection"> | Date | string
-  }
-
-  export type UserCreateInput = {
-    id?: string
-    authId: string
-    email: string
-    name?: string | null
+    authUserId: string
+    targetMargin: Decimal | DecimalJsLike | number | string
+    taxFixed: Decimal | DecimalJsLike | number | string
+    taxVariable: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    transactions?: TransactionCreateNestedManyWithoutUserInput
-    breakevens?: BreakevenCreateNestedManyWithoutUserInput
-    projections?: ProjectionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutProfileInput
   }
 
-  export type UserUncheckedCreateInput = {
+  export type ProfileUncheckedCreateInput = {
     id?: string
-    authId: string
-    email: string
-    name?: string | null
+    authUserId: string
+    targetMargin: Decimal | DecimalJsLike | number | string
+    taxFixed: Decimal | DecimalJsLike | number | string
+    taxVariable: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
-    breakevens?: BreakevenUncheckedCreateNestedManyWithoutUserInput
-    projections?: ProjectionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutProfileInput
   }
 
-  export type UserUpdateInput = {
+  export type ProfileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    authUserId?: StringFieldUpdateOperationsInput | string
+    targetMargin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
-    breakevens?: BreakevenUpdateManyWithoutUserNestedInput
-    projections?: ProjectionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutProfileNestedInput
   }
 
-  export type UserUncheckedUpdateInput = {
+  export type ProfileUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    authUserId?: StringFieldUpdateOperationsInput | string
+    targetMargin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
-    breakevens?: BreakevenUncheckedUpdateManyWithoutUserNestedInput
-    projections?: ProjectionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutProfileNestedInput
   }
 
-  export type UserCreateManyInput = {
+  export type ProfileCreateManyInput = {
     id?: string
-    authId: string
-    email: string
-    name?: string | null
+    authUserId: string
+    targetMargin: Decimal | DecimalJsLike | number | string
+    taxFixed: Decimal | DecimalJsLike | number | string
+    taxVariable: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type UserUpdateManyMutationInput = {
+  export type ProfileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    authUserId?: StringFieldUpdateOperationsInput | string
+    targetMargin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserUncheckedUpdateManyInput = {
+  export type ProfileUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    authUserId?: StringFieldUpdateOperationsInput | string
+    targetMargin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionCreateInput = {
     id?: string
-    amount: number
-    currency?: string
-    type: string
-    category: string
-    description: string
-    date: Date | string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.TransactionType
+    concept: string
+    quantity: number
+    isFixed: boolean
+    isBusiness: boolean
     createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutTransactionsInput
+    profile: ProfileCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateInput = {
     id?: string
-    userId: string
-    amount: number
-    currency?: string
-    type: string
-    category: string
-    description: string
-    date: Date | string
+    profileId: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.TransactionType
+    concept: string
+    quantity: number
+    isFixed: boolean
+    isBusiness: boolean
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type TransactionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    concept?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    isFixed?: BoolFieldUpdateOperationsInput | boolean
+    isBusiness?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    profile?: ProfileUpdateOneRequiredWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    concept?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    isFixed?: BoolFieldUpdateOperationsInput | boolean
+    isBusiness?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionCreateManyInput = {
     id?: string
-    userId: string
-    amount: number
-    currency?: string
-    type: string
-    category: string
-    description: string
-    date: Date | string
+    profileId: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.TransactionType
+    concept: string
+    quantity: number
+    isFixed: boolean
+    isBusiness: boolean
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type TransactionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    concept?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    isFixed?: BoolFieldUpdateOperationsInput | boolean
+    isBusiness?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    concept?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    isFixed?: BoolFieldUpdateOperationsInput | boolean
+    isBusiness?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BreakevenCreateInput = {
-    id?: string
-    name: string
-    fixedCosts: number
-    variableCostPerUnit: number
-    pricePerUnit: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutBreakevensInput
-  }
-
-  export type BreakevenUncheckedCreateInput = {
-    id?: string
-    userId: string
-    name: string
-    fixedCosts: number
-    variableCostPerUnit: number
-    pricePerUnit: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BreakevenUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    fixedCosts?: FloatFieldUpdateOperationsInput | number
-    variableCostPerUnit?: FloatFieldUpdateOperationsInput | number
-    pricePerUnit?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutBreakevensNestedInput
-  }
-
-  export type BreakevenUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    fixedCosts?: FloatFieldUpdateOperationsInput | number
-    variableCostPerUnit?: FloatFieldUpdateOperationsInput | number
-    pricePerUnit?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BreakevenCreateManyInput = {
-    id?: string
-    userId: string
-    name: string
-    fixedCosts: number
-    variableCostPerUnit: number
-    pricePerUnit: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BreakevenUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    fixedCosts?: FloatFieldUpdateOperationsInput | number
-    variableCostPerUnit?: FloatFieldUpdateOperationsInput | number
-    pricePerUnit?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BreakevenUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    fixedCosts?: FloatFieldUpdateOperationsInput | number
-    variableCostPerUnit?: FloatFieldUpdateOperationsInput | number
-    pricePerUnit?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ProjectionCreateInput = {
-    id?: string
-    name: string
-    monthlyRevenue: number
-    growthRate: number
-    months: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutProjectionsInput
-  }
-
-  export type ProjectionUncheckedCreateInput = {
-    id?: string
-    userId: string
-    name: string
-    monthlyRevenue: number
-    growthRate: number
-    months: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ProjectionUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    monthlyRevenue?: FloatFieldUpdateOperationsInput | number
-    growthRate?: FloatFieldUpdateOperationsInput | number
-    months?: IntFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutProjectionsNestedInput
-  }
-
-  export type ProjectionUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    monthlyRevenue?: FloatFieldUpdateOperationsInput | number
-    growthRate?: FloatFieldUpdateOperationsInput | number
-    months?: IntFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ProjectionCreateManyInput = {
-    id?: string
-    userId: string
-    name: string
-    monthlyRevenue: number
-    growthRate: number
-    months: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ProjectionUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    monthlyRevenue?: FloatFieldUpdateOperationsInput | number
-    growthRate?: FloatFieldUpdateOperationsInput | number
-    months?: IntFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ProjectionUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    monthlyRevenue?: FloatFieldUpdateOperationsInput | number
-    growthRate?: FloatFieldUpdateOperationsInput | number
-    months?: IntFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -6615,19 +3803,15 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  export type DecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -6647,60 +3831,50 @@ export namespace Prisma {
     none?: TransactionWhereInput
   }
 
-  export type BreakevenListRelationFilter = {
-    every?: BreakevenWhereInput
-    some?: BreakevenWhereInput
-    none?: BreakevenWhereInput
-  }
-
-  export type ProjectionListRelationFilter = {
-    every?: ProjectionWhereInput
-    some?: ProjectionWhereInput
-    none?: ProjectionWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type TransactionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type BreakevenOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type ProjectionOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type UserCountOrderByAggregateInput = {
+  export type ProfileCountOrderByAggregateInput = {
     id?: SortOrder
-    authId?: SortOrder
-    email?: SortOrder
-    name?: SortOrder
+    authUserId?: SortOrder
+    targetMargin?: SortOrder
+    taxFixed?: SortOrder
+    taxVariable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type UserMaxOrderByAggregateInput = {
+  export type ProfileAvgOrderByAggregateInput = {
+    targetMargin?: SortOrder
+    taxFixed?: SortOrder
+    taxVariable?: SortOrder
+  }
+
+  export type ProfileMaxOrderByAggregateInput = {
     id?: SortOrder
-    authId?: SortOrder
-    email?: SortOrder
-    name?: SortOrder
+    authUserId?: SortOrder
+    targetMargin?: SortOrder
+    taxFixed?: SortOrder
+    taxVariable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type UserMinOrderByAggregateInput = {
+  export type ProfileMinOrderByAggregateInput = {
     id?: SortOrder
-    authId?: SortOrder
-    email?: SortOrder
-    name?: SortOrder
+    authUserId?: SortOrder
+    targetMargin?: SortOrder
+    taxFixed?: SortOrder
+    taxVariable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type ProfileSumOrderByAggregateInput = {
+    targetMargin?: SortOrder
+    taxFixed?: SortOrder
+    taxVariable?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -6721,22 +3895,20 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
+  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -6753,131 +3925,11 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
-  }
-
-  export type TransactionCountOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    amount?: SortOrder
-    currency?: SortOrder
-    type?: SortOrder
-    category?: SortOrder
-    description?: SortOrder
-    date?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type TransactionAvgOrderByAggregateInput = {
-    amount?: SortOrder
-  }
-
-  export type TransactionMaxOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    amount?: SortOrder
-    currency?: SortOrder
-    type?: SortOrder
-    category?: SortOrder
-    description?: SortOrder
-    date?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type TransactionMinOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    amount?: SortOrder
-    currency?: SortOrder
-    type?: SortOrder
-    category?: SortOrder
-    description?: SortOrder
-    date?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type TransactionSumOrderByAggregateInput = {
-    amount?: SortOrder
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type BreakevenCountOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    fixedCosts?: SortOrder
-    variableCostPerUnit?: SortOrder
-    pricePerUnit?: SortOrder
-    currency?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type BreakevenAvgOrderByAggregateInput = {
-    fixedCosts?: SortOrder
-    variableCostPerUnit?: SortOrder
-    pricePerUnit?: SortOrder
-  }
-
-  export type BreakevenMaxOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    fixedCosts?: SortOrder
-    variableCostPerUnit?: SortOrder
-    pricePerUnit?: SortOrder
-    currency?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type BreakevenMinOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    fixedCosts?: SortOrder
-    variableCostPerUnit?: SortOrder
-    pricePerUnit?: SortOrder
-    currency?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type BreakevenSumOrderByAggregateInput = {
-    fixedCosts?: SortOrder
-    variableCostPerUnit?: SortOrder
-    pricePerUnit?: SortOrder
+  export type EnumTransactionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -6891,52 +3943,70 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type ProjectionCountOrderByAggregateInput = {
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type ProfileScalarRelationFilter = {
+    is?: ProfileWhereInput
+    isNot?: ProfileWhereInput
+  }
+
+  export type TransactionCountOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    monthlyRevenue?: SortOrder
-    growthRate?: SortOrder
-    months?: SortOrder
-    currency?: SortOrder
+    profileId?: SortOrder
+    amount?: SortOrder
+    type?: SortOrder
+    concept?: SortOrder
+    quantity?: SortOrder
+    isFixed?: SortOrder
+    isBusiness?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
-  export type ProjectionAvgOrderByAggregateInput = {
-    monthlyRevenue?: SortOrder
-    growthRate?: SortOrder
-    months?: SortOrder
+  export type TransactionAvgOrderByAggregateInput = {
+    amount?: SortOrder
+    quantity?: SortOrder
   }
 
-  export type ProjectionMaxOrderByAggregateInput = {
+  export type TransactionMaxOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    monthlyRevenue?: SortOrder
-    growthRate?: SortOrder
-    months?: SortOrder
-    currency?: SortOrder
+    profileId?: SortOrder
+    amount?: SortOrder
+    type?: SortOrder
+    concept?: SortOrder
+    quantity?: SortOrder
+    isFixed?: SortOrder
+    isBusiness?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
-  export type ProjectionMinOrderByAggregateInput = {
+  export type TransactionMinOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    monthlyRevenue?: SortOrder
-    growthRate?: SortOrder
-    months?: SortOrder
-    currency?: SortOrder
+    profileId?: SortOrder
+    amount?: SortOrder
+    type?: SortOrder
+    concept?: SortOrder
+    quantity?: SortOrder
+    isFixed?: SortOrder
+    isBusiness?: SortOrder
     createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
-  export type ProjectionSumOrderByAggregateInput = {
-    monthlyRevenue?: SortOrder
-    growthRate?: SortOrder
-    months?: SortOrder
+  export type TransactionSumOrderByAggregateInput = {
+    amount?: SortOrder
+    quantity?: SortOrder
+  }
+
+  export type EnumTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.TransactionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTransactionTypeFilter<$PrismaModel>
+    _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -6955,184 +4025,80 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type TransactionCreateNestedManyWithoutUserInput = {
-    create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
-    createMany?: TransactionCreateManyUserInputEnvelope
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type TransactionCreateNestedManyWithoutProfileInput = {
+    create?: XOR<TransactionCreateWithoutProfileInput, TransactionUncheckedCreateWithoutProfileInput> | TransactionCreateWithoutProfileInput[] | TransactionUncheckedCreateWithoutProfileInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutProfileInput | TransactionCreateOrConnectWithoutProfileInput[]
+    createMany?: TransactionCreateManyProfileInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
-  export type BreakevenCreateNestedManyWithoutUserInput = {
-    create?: XOR<BreakevenCreateWithoutUserInput, BreakevenUncheckedCreateWithoutUserInput> | BreakevenCreateWithoutUserInput[] | BreakevenUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: BreakevenCreateOrConnectWithoutUserInput | BreakevenCreateOrConnectWithoutUserInput[]
-    createMany?: BreakevenCreateManyUserInputEnvelope
-    connect?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-  }
-
-  export type ProjectionCreateNestedManyWithoutUserInput = {
-    create?: XOR<ProjectionCreateWithoutUserInput, ProjectionUncheckedCreateWithoutUserInput> | ProjectionCreateWithoutUserInput[] | ProjectionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ProjectionCreateOrConnectWithoutUserInput | ProjectionCreateOrConnectWithoutUserInput[]
-    createMany?: ProjectionCreateManyUserInputEnvelope
-    connect?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-  }
-
-  export type TransactionUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
-    createMany?: TransactionCreateManyUserInputEnvelope
+  export type TransactionUncheckedCreateNestedManyWithoutProfileInput = {
+    create?: XOR<TransactionCreateWithoutProfileInput, TransactionUncheckedCreateWithoutProfileInput> | TransactionCreateWithoutProfileInput[] | TransactionUncheckedCreateWithoutProfileInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutProfileInput | TransactionCreateOrConnectWithoutProfileInput[]
+    createMany?: TransactionCreateManyProfileInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
-  }
-
-  export type BreakevenUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<BreakevenCreateWithoutUserInput, BreakevenUncheckedCreateWithoutUserInput> | BreakevenCreateWithoutUserInput[] | BreakevenUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: BreakevenCreateOrConnectWithoutUserInput | BreakevenCreateOrConnectWithoutUserInput[]
-    createMany?: BreakevenCreateManyUserInputEnvelope
-    connect?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-  }
-
-  export type ProjectionUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<ProjectionCreateWithoutUserInput, ProjectionUncheckedCreateWithoutUserInput> | ProjectionCreateWithoutUserInput[] | ProjectionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ProjectionCreateOrConnectWithoutUserInput | ProjectionCreateOrConnectWithoutUserInput[]
-    createMany?: ProjectionCreateManyUserInputEnvelope
-    connect?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
+  export type DecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
 
-  export type TransactionUpdateManyWithoutUserNestedInput = {
-    create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
-    upsert?: TransactionUpsertWithWhereUniqueWithoutUserInput | TransactionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: TransactionCreateManyUserInputEnvelope
+  export type TransactionUpdateManyWithoutProfileNestedInput = {
+    create?: XOR<TransactionCreateWithoutProfileInput, TransactionUncheckedCreateWithoutProfileInput> | TransactionCreateWithoutProfileInput[] | TransactionUncheckedCreateWithoutProfileInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutProfileInput | TransactionCreateOrConnectWithoutProfileInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutProfileInput | TransactionUpsertWithWhereUniqueWithoutProfileInput[]
+    createMany?: TransactionCreateManyProfileInputEnvelope
     set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
     disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
     delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
-    update?: TransactionUpdateWithWhereUniqueWithoutUserInput | TransactionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: TransactionUpdateManyWithWhereWithoutUserInput | TransactionUpdateManyWithWhereWithoutUserInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutProfileInput | TransactionUpdateWithWhereUniqueWithoutProfileInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutProfileInput | TransactionUpdateManyWithWhereWithoutProfileInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
-  export type BreakevenUpdateManyWithoutUserNestedInput = {
-    create?: XOR<BreakevenCreateWithoutUserInput, BreakevenUncheckedCreateWithoutUserInput> | BreakevenCreateWithoutUserInput[] | BreakevenUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: BreakevenCreateOrConnectWithoutUserInput | BreakevenCreateOrConnectWithoutUserInput[]
-    upsert?: BreakevenUpsertWithWhereUniqueWithoutUserInput | BreakevenUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: BreakevenCreateManyUserInputEnvelope
-    set?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-    disconnect?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-    delete?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-    connect?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-    update?: BreakevenUpdateWithWhereUniqueWithoutUserInput | BreakevenUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: BreakevenUpdateManyWithWhereWithoutUserInput | BreakevenUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: BreakevenScalarWhereInput | BreakevenScalarWhereInput[]
-  }
-
-  export type ProjectionUpdateManyWithoutUserNestedInput = {
-    create?: XOR<ProjectionCreateWithoutUserInput, ProjectionUncheckedCreateWithoutUserInput> | ProjectionCreateWithoutUserInput[] | ProjectionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ProjectionCreateOrConnectWithoutUserInput | ProjectionCreateOrConnectWithoutUserInput[]
-    upsert?: ProjectionUpsertWithWhereUniqueWithoutUserInput | ProjectionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: ProjectionCreateManyUserInputEnvelope
-    set?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-    disconnect?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-    delete?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-    connect?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-    update?: ProjectionUpdateWithWhereUniqueWithoutUserInput | ProjectionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: ProjectionUpdateManyWithWhereWithoutUserInput | ProjectionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: ProjectionScalarWhereInput | ProjectionScalarWhereInput[]
-  }
-
-  export type TransactionUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
-    upsert?: TransactionUpsertWithWhereUniqueWithoutUserInput | TransactionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: TransactionCreateManyUserInputEnvelope
+  export type TransactionUncheckedUpdateManyWithoutProfileNestedInput = {
+    create?: XOR<TransactionCreateWithoutProfileInput, TransactionUncheckedCreateWithoutProfileInput> | TransactionCreateWithoutProfileInput[] | TransactionUncheckedCreateWithoutProfileInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutProfileInput | TransactionCreateOrConnectWithoutProfileInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutProfileInput | TransactionUpsertWithWhereUniqueWithoutProfileInput[]
+    createMany?: TransactionCreateManyProfileInputEnvelope
     set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
     disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
     delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
-    update?: TransactionUpdateWithWhereUniqueWithoutUserInput | TransactionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: TransactionUpdateManyWithWhereWithoutUserInput | TransactionUpdateManyWithWhereWithoutUserInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutProfileInput | TransactionUpdateWithWhereUniqueWithoutProfileInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutProfileInput | TransactionUpdateManyWithWhereWithoutProfileInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
-  export type BreakevenUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<BreakevenCreateWithoutUserInput, BreakevenUncheckedCreateWithoutUserInput> | BreakevenCreateWithoutUserInput[] | BreakevenUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: BreakevenCreateOrConnectWithoutUserInput | BreakevenCreateOrConnectWithoutUserInput[]
-    upsert?: BreakevenUpsertWithWhereUniqueWithoutUserInput | BreakevenUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: BreakevenCreateManyUserInputEnvelope
-    set?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-    disconnect?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-    delete?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-    connect?: BreakevenWhereUniqueInput | BreakevenWhereUniqueInput[]
-    update?: BreakevenUpdateWithWhereUniqueWithoutUserInput | BreakevenUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: BreakevenUpdateManyWithWhereWithoutUserInput | BreakevenUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: BreakevenScalarWhereInput | BreakevenScalarWhereInput[]
+  export type ProfileCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<ProfileCreateWithoutTransactionsInput, ProfileUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutTransactionsInput
+    connect?: ProfileWhereUniqueInput
   }
 
-  export type ProjectionUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<ProjectionCreateWithoutUserInput, ProjectionUncheckedCreateWithoutUserInput> | ProjectionCreateWithoutUserInput[] | ProjectionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ProjectionCreateOrConnectWithoutUserInput | ProjectionCreateOrConnectWithoutUserInput[]
-    upsert?: ProjectionUpsertWithWhereUniqueWithoutUserInput | ProjectionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: ProjectionCreateManyUserInputEnvelope
-    set?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-    disconnect?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-    delete?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-    connect?: ProjectionWhereUniqueInput | ProjectionWhereUniqueInput[]
-    update?: ProjectionUpdateWithWhereUniqueWithoutUserInput | ProjectionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: ProjectionUpdateManyWithWhereWithoutUserInput | ProjectionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: ProjectionScalarWhereInput | ProjectionScalarWhereInput[]
-  }
-
-  export type UserCreateNestedOneWithoutTransactionsInput = {
-    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type UserUpdateOneRequiredWithoutTransactionsNestedInput = {
-    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
-    upsert?: UserUpsertWithoutTransactionsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsInput, UserUpdateWithoutTransactionsInput>, UserUncheckedUpdateWithoutTransactionsInput>
-  }
-
-  export type UserCreateNestedOneWithoutBreakevensInput = {
-    create?: XOR<UserCreateWithoutBreakevensInput, UserUncheckedCreateWithoutBreakevensInput>
-    connectOrCreate?: UserCreateOrConnectWithoutBreakevensInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserUpdateOneRequiredWithoutBreakevensNestedInput = {
-    create?: XOR<UserCreateWithoutBreakevensInput, UserUncheckedCreateWithoutBreakevensInput>
-    connectOrCreate?: UserCreateOrConnectWithoutBreakevensInput
-    upsert?: UserUpsertWithoutBreakevensInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBreakevensInput, UserUpdateWithoutBreakevensInput>, UserUncheckedUpdateWithoutBreakevensInput>
-  }
-
-  export type UserCreateNestedOneWithoutProjectionsInput = {
-    create?: XOR<UserCreateWithoutProjectionsInput, UserUncheckedCreateWithoutProjectionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutProjectionsInput
-    connect?: UserWhereUniqueInput
+  export type EnumTransactionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.TransactionType
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -7143,12 +4109,16 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserUpdateOneRequiredWithoutProjectionsNestedInput = {
-    create?: XOR<UserCreateWithoutProjectionsInput, UserUncheckedCreateWithoutProjectionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutProjectionsInput
-    upsert?: UserUpsertWithoutProjectionsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProjectionsInput, UserUpdateWithoutProjectionsInput>, UserUncheckedUpdateWithoutProjectionsInput>
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type ProfileUpdateOneRequiredWithoutTransactionsNestedInput = {
+    create?: XOR<ProfileCreateWithoutTransactionsInput, ProfileUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutTransactionsInput
+    upsert?: ProfileUpsertWithoutTransactionsInput
+    connect?: ProfileWhereUniqueInput
+    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutTransactionsInput, ProfileUpdateWithoutTransactionsInput>, ProfileUncheckedUpdateWithoutTransactionsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -7165,18 +4135,15 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  export type NestedDecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -7218,32 +4185,20 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -7260,31 +4215,26 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
+  export type NestedEnumTransactionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
   }
 
-  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.TransactionType
     _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedEnumTransactionTypeFilter<$PrismaModel>
+    _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -7303,118 +4253,71 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type TransactionCreateWithoutUserInput = {
-    id?: string
-    amount: number
-    currency?: string
-    type: string
-    category: string
-    description: string
-    date: Date | string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type TransactionUncheckedCreateWithoutUserInput = {
-    id?: string
-    amount: number
-    currency?: string
-    type: string
-    category: string
-    description: string
-    date: Date | string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type TransactionCreateOrConnectWithoutUserInput = {
+  export type TransactionCreateWithoutProfileInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.TransactionType
+    concept: string
+    quantity: number
+    isFixed: boolean
+    isBusiness: boolean
+    createdAt?: Date | string
+  }
+
+  export type TransactionUncheckedCreateWithoutProfileInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.TransactionType
+    concept: string
+    quantity: number
+    isFixed: boolean
+    isBusiness: boolean
+    createdAt?: Date | string
+  }
+
+  export type TransactionCreateOrConnectWithoutProfileInput = {
     where: TransactionWhereUniqueInput
-    create: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput>
+    create: XOR<TransactionCreateWithoutProfileInput, TransactionUncheckedCreateWithoutProfileInput>
   }
 
-  export type TransactionCreateManyUserInputEnvelope = {
-    data: TransactionCreateManyUserInput | TransactionCreateManyUserInput[]
+  export type TransactionCreateManyProfileInputEnvelope = {
+    data: TransactionCreateManyProfileInput | TransactionCreateManyProfileInput[]
     skipDuplicates?: boolean
   }
 
-  export type BreakevenCreateWithoutUserInput = {
-    id?: string
-    name: string
-    fixedCosts: number
-    variableCostPerUnit: number
-    pricePerUnit: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BreakevenUncheckedCreateWithoutUserInput = {
-    id?: string
-    name: string
-    fixedCosts: number
-    variableCostPerUnit: number
-    pricePerUnit: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BreakevenCreateOrConnectWithoutUserInput = {
-    where: BreakevenWhereUniqueInput
-    create: XOR<BreakevenCreateWithoutUserInput, BreakevenUncheckedCreateWithoutUserInput>
-  }
-
-  export type BreakevenCreateManyUserInputEnvelope = {
-    data: BreakevenCreateManyUserInput | BreakevenCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ProjectionCreateWithoutUserInput = {
-    id?: string
-    name: string
-    monthlyRevenue: number
-    growthRate: number
-    months: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ProjectionUncheckedCreateWithoutUserInput = {
-    id?: string
-    name: string
-    monthlyRevenue: number
-    growthRate: number
-    months: number
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ProjectionCreateOrConnectWithoutUserInput = {
-    where: ProjectionWhereUniqueInput
-    create: XOR<ProjectionCreateWithoutUserInput, ProjectionUncheckedCreateWithoutUserInput>
-  }
-
-  export type ProjectionCreateManyUserInputEnvelope = {
-    data: ProjectionCreateManyUserInput | ProjectionCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
+  export type TransactionUpsertWithWhereUniqueWithoutProfileInput = {
     where: TransactionWhereUniqueInput
-    update: XOR<TransactionUpdateWithoutUserInput, TransactionUncheckedUpdateWithoutUserInput>
-    create: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput>
+    update: XOR<TransactionUpdateWithoutProfileInput, TransactionUncheckedUpdateWithoutProfileInput>
+    create: XOR<TransactionCreateWithoutProfileInput, TransactionUncheckedCreateWithoutProfileInput>
   }
 
-  export type TransactionUpdateWithWhereUniqueWithoutUserInput = {
+  export type TransactionUpdateWithWhereUniqueWithoutProfileInput = {
     where: TransactionWhereUniqueInput
-    data: XOR<TransactionUpdateWithoutUserInput, TransactionUncheckedUpdateWithoutUserInput>
+    data: XOR<TransactionUpdateWithoutProfileInput, TransactionUncheckedUpdateWithoutProfileInput>
   }
 
-  export type TransactionUpdateManyWithWhereWithoutUserInput = {
+  export type TransactionUpdateManyWithWhereWithoutProfileInput = {
     where: TransactionScalarWhereInput
-    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutUserInput>
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutProfileInput>
   }
 
   export type TransactionScalarWhereInput = {
@@ -7422,393 +4325,114 @@ export namespace Prisma {
     OR?: TransactionScalarWhereInput[]
     NOT?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
     id?: StringFilter<"Transaction"> | string
-    userId?: StringFilter<"Transaction"> | string
-    amount?: FloatFilter<"Transaction"> | number
-    currency?: StringFilter<"Transaction"> | string
-    type?: StringFilter<"Transaction"> | string
-    category?: StringFilter<"Transaction"> | string
-    description?: StringFilter<"Transaction"> | string
-    date?: DateTimeFilter<"Transaction"> | Date | string
+    profileId?: StringFilter<"Transaction"> | string
+    amount?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
+    concept?: StringFilter<"Transaction"> | string
+    quantity?: IntFilter<"Transaction"> | number
+    isFixed?: BoolFilter<"Transaction"> | boolean
+    isBusiness?: BoolFilter<"Transaction"> | boolean
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
-    updatedAt?: DateTimeFilter<"Transaction"> | Date | string
   }
 
-  export type BreakevenUpsertWithWhereUniqueWithoutUserInput = {
-    where: BreakevenWhereUniqueInput
-    update: XOR<BreakevenUpdateWithoutUserInput, BreakevenUncheckedUpdateWithoutUserInput>
-    create: XOR<BreakevenCreateWithoutUserInput, BreakevenUncheckedCreateWithoutUserInput>
-  }
-
-  export type BreakevenUpdateWithWhereUniqueWithoutUserInput = {
-    where: BreakevenWhereUniqueInput
-    data: XOR<BreakevenUpdateWithoutUserInput, BreakevenUncheckedUpdateWithoutUserInput>
-  }
-
-  export type BreakevenUpdateManyWithWhereWithoutUserInput = {
-    where: BreakevenScalarWhereInput
-    data: XOR<BreakevenUpdateManyMutationInput, BreakevenUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type BreakevenScalarWhereInput = {
-    AND?: BreakevenScalarWhereInput | BreakevenScalarWhereInput[]
-    OR?: BreakevenScalarWhereInput[]
-    NOT?: BreakevenScalarWhereInput | BreakevenScalarWhereInput[]
-    id?: StringFilter<"Breakeven"> | string
-    userId?: StringFilter<"Breakeven"> | string
-    name?: StringFilter<"Breakeven"> | string
-    fixedCosts?: FloatFilter<"Breakeven"> | number
-    variableCostPerUnit?: FloatFilter<"Breakeven"> | number
-    pricePerUnit?: FloatFilter<"Breakeven"> | number
-    currency?: StringFilter<"Breakeven"> | string
-    createdAt?: DateTimeFilter<"Breakeven"> | Date | string
-    updatedAt?: DateTimeFilter<"Breakeven"> | Date | string
-  }
-
-  export type ProjectionUpsertWithWhereUniqueWithoutUserInput = {
-    where: ProjectionWhereUniqueInput
-    update: XOR<ProjectionUpdateWithoutUserInput, ProjectionUncheckedUpdateWithoutUserInput>
-    create: XOR<ProjectionCreateWithoutUserInput, ProjectionUncheckedCreateWithoutUserInput>
-  }
-
-  export type ProjectionUpdateWithWhereUniqueWithoutUserInput = {
-    where: ProjectionWhereUniqueInput
-    data: XOR<ProjectionUpdateWithoutUserInput, ProjectionUncheckedUpdateWithoutUserInput>
-  }
-
-  export type ProjectionUpdateManyWithWhereWithoutUserInput = {
-    where: ProjectionScalarWhereInput
-    data: XOR<ProjectionUpdateManyMutationInput, ProjectionUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type ProjectionScalarWhereInput = {
-    AND?: ProjectionScalarWhereInput | ProjectionScalarWhereInput[]
-    OR?: ProjectionScalarWhereInput[]
-    NOT?: ProjectionScalarWhereInput | ProjectionScalarWhereInput[]
-    id?: StringFilter<"Projection"> | string
-    userId?: StringFilter<"Projection"> | string
-    name?: StringFilter<"Projection"> | string
-    monthlyRevenue?: FloatFilter<"Projection"> | number
-    growthRate?: FloatFilter<"Projection"> | number
-    months?: IntFilter<"Projection"> | number
-    currency?: StringFilter<"Projection"> | string
-    createdAt?: DateTimeFilter<"Projection"> | Date | string
-    updatedAt?: DateTimeFilter<"Projection"> | Date | string
-  }
-
-  export type UserCreateWithoutTransactionsInput = {
+  export type ProfileCreateWithoutTransactionsInput = {
     id?: string
-    authId: string
-    email: string
-    name?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    breakevens?: BreakevenCreateNestedManyWithoutUserInput
-    projections?: ProjectionCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutTransactionsInput = {
-    id?: string
-    authId: string
-    email: string
-    name?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    breakevens?: BreakevenUncheckedCreateNestedManyWithoutUserInput
-    projections?: ProjectionUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutTransactionsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-  }
-
-  export type UserUpsertWithoutTransactionsInput = {
-    update: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
-    create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutTransactionsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
-  }
-
-  export type UserUpdateWithoutTransactionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    breakevens?: BreakevenUpdateManyWithoutUserNestedInput
-    projections?: ProjectionUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutTransactionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    breakevens?: BreakevenUncheckedUpdateManyWithoutUserNestedInput
-    projections?: ProjectionUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutBreakevensInput = {
-    id?: string
-    authId: string
-    email: string
-    name?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    transactions?: TransactionCreateNestedManyWithoutUserInput
-    projections?: ProjectionCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutBreakevensInput = {
-    id?: string
-    authId: string
-    email: string
-    name?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
-    projections?: ProjectionUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutBreakevensInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutBreakevensInput, UserUncheckedCreateWithoutBreakevensInput>
-  }
-
-  export type UserUpsertWithoutBreakevensInput = {
-    update: XOR<UserUpdateWithoutBreakevensInput, UserUncheckedUpdateWithoutBreakevensInput>
-    create: XOR<UserCreateWithoutBreakevensInput, UserUncheckedCreateWithoutBreakevensInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutBreakevensInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutBreakevensInput, UserUncheckedUpdateWithoutBreakevensInput>
-  }
-
-  export type UserUpdateWithoutBreakevensInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
-    projections?: ProjectionUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutBreakevensInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
-    projections?: ProjectionUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutProjectionsInput = {
-    id?: string
-    authId: string
-    email: string
-    name?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    transactions?: TransactionCreateNestedManyWithoutUserInput
-    breakevens?: BreakevenCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutProjectionsInput = {
-    id?: string
-    authId: string
-    email: string
-    name?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
-    breakevens?: BreakevenUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutProjectionsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutProjectionsInput, UserUncheckedCreateWithoutProjectionsInput>
-  }
-
-  export type UserUpsertWithoutProjectionsInput = {
-    update: XOR<UserUpdateWithoutProjectionsInput, UserUncheckedUpdateWithoutProjectionsInput>
-    create: XOR<UserCreateWithoutProjectionsInput, UserUncheckedCreateWithoutProjectionsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutProjectionsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutProjectionsInput, UserUncheckedUpdateWithoutProjectionsInput>
-  }
-
-  export type UserUpdateWithoutProjectionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
-    breakevens?: BreakevenUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutProjectionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    authId?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
-    breakevens?: BreakevenUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type TransactionCreateManyUserInput = {
-    id?: string
-    amount: number
-    currency?: string
-    type: string
-    category: string
-    description: string
-    date: Date | string
+    authUserId: string
+    targetMargin: Decimal | DecimalJsLike | number | string
+    taxFixed: Decimal | DecimalJsLike | number | string
+    taxVariable: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type BreakevenCreateManyUserInput = {
+  export type ProfileUncheckedCreateWithoutTransactionsInput = {
     id?: string
-    name: string
-    fixedCosts: number
-    variableCostPerUnit: number
-    pricePerUnit: number
-    currency?: string
+    authUserId: string
+    targetMargin: Decimal | DecimalJsLike | number | string
+    taxFixed: Decimal | DecimalJsLike | number | string
+    taxVariable: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type ProjectionCreateManyUserInput = {
+  export type ProfileCreateOrConnectWithoutTransactionsInput = {
+    where: ProfileWhereUniqueInput
+    create: XOR<ProfileCreateWithoutTransactionsInput, ProfileUncheckedCreateWithoutTransactionsInput>
+  }
+
+  export type ProfileUpsertWithoutTransactionsInput = {
+    update: XOR<ProfileUpdateWithoutTransactionsInput, ProfileUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<ProfileCreateWithoutTransactionsInput, ProfileUncheckedCreateWithoutTransactionsInput>
+    where?: ProfileWhereInput
+  }
+
+  export type ProfileUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: ProfileWhereInput
+    data: XOR<ProfileUpdateWithoutTransactionsInput, ProfileUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type ProfileUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
+    targetMargin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
+    targetMargin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxFixed?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxVariable?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionCreateManyProfileInput = {
     id?: string
-    name: string
-    monthlyRevenue: number
-    growthRate: number
-    months: number
-    currency?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type: $Enums.TransactionType
+    concept: string
+    quantity: number
+    isFixed: boolean
+    isBusiness: boolean
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
-  export type TransactionUpdateWithoutUserInput = {
+  export type TransactionUpdateWithoutProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    concept?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    isFixed?: BoolFieldUpdateOperationsInput | boolean
+    isBusiness?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TransactionUncheckedUpdateWithoutUserInput = {
+  export type TransactionUncheckedUpdateWithoutProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    concept?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    isFixed?: BoolFieldUpdateOperationsInput | boolean
+    isBusiness?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TransactionUncheckedUpdateManyWithoutUserInput = {
+  export type TransactionUncheckedUpdateManyWithoutProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    concept?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    isFixed?: BoolFieldUpdateOperationsInput | boolean
+    isBusiness?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BreakevenUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    fixedCosts?: FloatFieldUpdateOperationsInput | number
-    variableCostPerUnit?: FloatFieldUpdateOperationsInput | number
-    pricePerUnit?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BreakevenUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    fixedCosts?: FloatFieldUpdateOperationsInput | number
-    variableCostPerUnit?: FloatFieldUpdateOperationsInput | number
-    pricePerUnit?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BreakevenUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    fixedCosts?: FloatFieldUpdateOperationsInput | number
-    variableCostPerUnit?: FloatFieldUpdateOperationsInput | number
-    pricePerUnit?: FloatFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ProjectionUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    monthlyRevenue?: FloatFieldUpdateOperationsInput | number
-    growthRate?: FloatFieldUpdateOperationsInput | number
-    months?: IntFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ProjectionUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    monthlyRevenue?: FloatFieldUpdateOperationsInput | number
-    growthRate?: FloatFieldUpdateOperationsInput | number
-    months?: IntFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ProjectionUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    monthlyRevenue?: FloatFieldUpdateOperationsInput | number
-    growthRate?: FloatFieldUpdateOperationsInput | number
-    months?: IntFieldUpdateOperationsInput | number
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

@@ -1,0 +1,4 @@
+﻿src/actions/transactions.ts(48,43): error TS2339: Property 'errors' does not exist on type 'ZodError<{ amount: string; type: "INCOME" | "EXPENSE"; concept: string; quantity: number; isFixed: boolean; isBusiness: boolean; }>'.
+src/actions/transactions.ts(49,13): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/validations/financeSchemas.ts(84,5): error TS2353: Object literal may only specify known properties, and 'required_error' does not exist in type '{ error?: string | $ZodErrorMap<$ZodIssueInvalidType<unknown>> | undefined; message?: string | undefined; }'.
+src/validations/financeSchemas.ts(87,5): error TS2353: Object literal may only specify known properties, and 'required_error' does not exist in type '{ error?: string | $ZodErrorMap<$ZodIssueInvalidType<unknown>> | undefined; message?: string | undefined; }'.
