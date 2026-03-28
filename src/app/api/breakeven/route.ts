@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-export const dynamic = 'force-dynamic'
 import { calculateBreakeven } from '@/actions/breakeven'
 import { corsHeaders } from '../cors'
+
+export const dynamic = 'force-dynamic'
 
 export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: corsHeaders })
