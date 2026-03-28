@@ -10,6 +10,16 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+
+  /* FinWise Navy Theme */
+  --color-navy-50: #f0f5ff;
+  --color-navy-100: #d0e4f8;
+  --color-navy-200: #85b7eb;
+  --color-navy-300: #3b82d4;
+  --color-navy-400: #1a4a8c;
+  --color-navy-500: #0a2a5c;
+  --color-navy-600: #06183a;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,30 +59,30 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #f0f5ff; /* navy-50 */
+  --foreground: #0a2a5c; /* navy-500 */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: #0a2a5c;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --popover-foreground: #0a2a5c;
+  --primary: #0a2a5c;
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --secondary: #d0e4f8;
+  --secondary-foreground: #0a2a5c;
+  --muted: #d0e4f8;
+  --muted-foreground: #85b7eb;
+  --accent: #d0e4f8;
+  --accent-foreground: #0a2a5c;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #d0e4f8;
+  --input: #d0e4f8;
+  --ring: #3b82d4;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -84,47 +94,53 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #06183a;
+  --foreground: #f0f5ff;
+  --border: rgba(208, 228, 248, 0.1);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    box-sizing: border-box;
   }
   body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
   }
 }
+
+@layer components {
+  /* Animación de entrada para páginas */
+  .page-enter {
+    animation: fadeSlideUp 0.25s ease forwards;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white rounded-2xl border border-navy-100 p-4 shadow-sm;
+  }
+
+  /* Input base */
+  .input-base {
+    @apply w-full rounded-xl border border-navy-100 px-3 py-2.5 text-sm text-navy-500
+           focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-transparent
+           placeholder:text-navy-200 transition-all bg-white;
+  }
+
+  /* Botón primario */
+  .btn-primary {
+    @apply bg-navy-500 text-white rounded-xl px-4 py-2.5 text-sm font-medium
+           active:scale-95 transition-all hover:bg-navy-400 disabled:opacity-50 disabled:active:scale-100;
+  }
+
+  /* Botón secundario */
+  .btn-secondary {
+    @apply bg-navy-50 text-navy-400 border border-navy-100 rounded-xl px-4 py-2.5
+           text-sm font-medium active:scale-95 transition-all hover:bg-navy-100;
+  }
+}
