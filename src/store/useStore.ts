@@ -9,6 +9,7 @@ export interface Movimiento {
   fecha: string
   isFixed: boolean
   isBusiness: boolean
+  quantity: number
 }
 
 export interface Perfil {
@@ -136,6 +137,7 @@ const useStore = create<StoreState>((set, get) => ({
           fecha: t.createdAt,
           isFixed: t.isFixed,
           isBusiness: t.isBusiness,
+          quantity: t.quantity || 1,
         }))
         set({ movimientos, error: null })
       }

@@ -204,7 +204,9 @@ export default function GastosPage() {
             <h2 className="text-xs font-bold uppercase tracking-wider text-navy-400">
               {tipoFiltro === 'todos' ? 'Todos los movimientos' : tipoFiltro === 'ingreso' ? 'Ingresos Registrados' : 'Gastos Detallados'}
             </h2>
-            <Badge estado={tipoFiltro === 'todos' ? 'neutral' : tipoFiltro} texto={String(movFiltrados.length)} />
+            <Badge estado={tipoFiltro === 'todos' ? 'neutral' : tipoFiltro}>
+              {String(movFiltrados.length)}
+            </Badge>
           </div>
 
           {movFiltrados.length === 0 ? (

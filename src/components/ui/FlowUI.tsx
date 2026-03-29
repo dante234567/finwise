@@ -53,13 +53,13 @@ const ESTADO_LABEL: Record<string, string> = {
   egreso:    'Egreso',
 }
 
-export function Badge({ estado }: { estado: string }) {
+export function Badge({ estado, children }: { estado: string; children?: React.ReactNode }) {
   return (
     <span className={cn(
       "text-[10px] font-medium px-2 py-0.5 rounded-full border",
       ESTADO_STYLES[estado] || 'bg-navy-50 text-navy-300 border-navy-100'
     )}>
-      {ESTADO_LABEL[estado] || estado}
+      {children || ESTADO_LABEL[estado] || estado}
     </span>
   )
 }
