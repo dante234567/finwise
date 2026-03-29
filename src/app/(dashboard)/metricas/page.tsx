@@ -57,7 +57,7 @@ export default function MetricasPage() {
           />
           <StatCardSmall 
             label="Margen Neto" 
-            value={`${(Number(kpis.margenNeto) * 100).toFixed(1)}%`} 
+            value={`${Number(kpis.margenNeto).toFixed(1)}%`} 
           />
           <StatCardSmall 
             label="Costo x Venta" 

@@ -89,6 +89,7 @@ export async function GET(request: NextRequest) {
       data: {
         tendencia: meses,
         kpis: {
+          ingresosTotales: ingresosTotal.toFixed(2),
           cantVentas,
           ticketProm: ticketProm.toFixed(2),
           margenNeto: margenNeto.toFixed(1),
