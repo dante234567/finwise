@@ -8,16 +8,16 @@ import { LogOut, User, Mail, Wallet, Save, Loader2, Info } from 'lucide-react'
 
 export default function SettingsPage() {
   const router = useRouter()
-  const { perfil, profileId, loading, updatePerfil } = useStore()
+  const { perfil, profileId, loading, updatePerfil, porcentajeSueldo, setPorcentajeSueldo } = useStore()
   
   const [nombre, setNombre] = useState(perfil.nombre || '')
-  const [porcentaje, setPorcentaje] = useState(perfil.porcentajeBolsillo || 35)
+  const [porcentaje, setPorcentaje] = useState(porcentajeSueldo || 35)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     setNombre(perfil.nombre)
-    setPorcentaje(perfil.porcentajeBolsillo)
-  }, [perfil])
+    setPorcentaje(porcentajeSueldo)
+  }, [perfil, porcentajeSueldo])
 
   const handleSave = async () => {
     if (!profileId) return
@@ -35,6 +35,7 @@ export default function SettingsPage() {
 
       if (res.ok) {
         updatePerfil({ nombre, porcentajeBolsillo: porcentaje })
+        setPorcentajeSueldo(porcentaje)
         alert('Configuración guardada correctamente')
       } else {
         const err = await res.json()
@@ -90,25 +91,35 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div className="flex justify-between items-end">
               <div>
-                <p className="text-sm font-semibold text-navy-500">Porcentaje "Bolsillo"</p>
-                <p className="text-[10px] text-navy-200 italic leading-tight">Qué % de la ganancia neta retirás para gastos personales</p>
+                <p className="text-sm font-semibold text-navy-500">¿Qué % de tus ganancias querés retirar?</p>
+                <p className="text-[10px] text-navy-200 italic leading-tight">Este porcentaje se calcula sobre tu ganancia bruta (Ingresos - Gastos)</p>
               </div>
-              <span className="text-xl font-bold text-navy-500 shrink-0 ml-2">{porcentaje}%</span>
+              <div className="flex items-center gap-1">
+                <input 
+                  type="number"
+                  min="0"
+                  max="100"
+                  className="w-12 text-right text-xl font-bold text-navy-500 bg-transparent border-none focus:ring-0 p-0"
+                  value={porcentaje}
+                  onChange={(e) => setPorcentaje(Math.min(100, Math.max(0, Number(e.target.value))))}
+                />
+                <span className="text-xl font-bold text-navy-500">%</span>
+              </div>
             </div>
             
             <input 
               type="range" 
-              min="10" 
-              max="80" 
-              step="5"
+              min="0" 
+              max="100" 
+              step="1"
               className="w-full h-2 bg-navy-50 rounded-lg appearance-none cursor-pointer accent-navy-500"
               value={porcentaje}
               onChange={(e) => setPorcentaje(Number(e.target.value))}
             />
             
             <div className="flex justify-between text-[10px] text-navy-200 px-1 font-medium italic">
-              <span>Conservador (10%)</span>
-              <span>Agresivo (80%)</span>
+              <span>Todo al negocio (0%)</span>
+              <span>Retiro total (100%)</span>
             </div>
           </div>
         </div>

@@ -37,6 +37,15 @@ interface StoreState {
   metrics: any | null
   loading: boolean
   error: string | null
+  porcentajeSueldo: number
+  setPorcentajeSueldo: (porcentaje: number) => void
+  getDistribucionGanancias: () => {
+    ingresosTotales: number
+    egresosTotales: number
+    gananciaBruta: number
+    sueldoRetenido: number
+    gananciaNetaNegocio: number
+  }
 
   init: (authUserId: string) => Promise<void>
   fetchMovimientos: () => Promise<void>
@@ -75,6 +84,8 @@ const useStore = create<StoreState>((set, get) => ({
   metrics: null,
   loading: false,
   error: null,
+  porcentajeSueldo: 0,
+  setPorcentajeSueldo: (porcentaje: number) => set({ porcentajeSueldo: porcentaje }),
 
   init: async (authUserId: string) => {
     if (!authUserId) return
@@ -104,6 +115,7 @@ const useStore = create<StoreState>((set, get) => ({
           porcentajeBolsillo: Number(data.targetMargin) * 100 || 35,
           moneda: 'ARS',
         },
+        porcentajeSueldo: Number(data.targetMargin) * 100 || 0,
       })
       
       await Promise.all([
@@ -254,6 +266,30 @@ const useStore = create<StoreState>((set, get) => ({
   },
 
   updatePerfil: (data: Partial<Perfil>) => set((s) => ({ perfil: { ...s.perfil, ...data } })),
+
+  getDistribucionGanancias: () => {
+    const movs = get().movimientos
+    const ingresosTotales = movs
+      .filter((m) => m.tipo === 'ingreso')
+      .reduce((acc, m) => acc + m.monto, 0)
+    const egresosTotales = movs
+      .filter((m) => m.tipo === 'egreso')
+      .reduce((acc, m) => acc + m.monto, 0)
+    
+    const gananciaBruta = ingresosTotales - egresosTotales
+    const sueldoRetenido = gananciaBruta > 0 
+      ? gananciaBruta * (get().porcentajeSueldo / 100) 
+      : 0
+    const gananciaNetaNegocio = gananciaBruta - sueldoRetenido
+
+    return {
+      ingresosTotales,
+      egresosTotales,
+      gananciaBruta,
+      sueldoRetenido,
+      gananciaNetaNegocio,
+    }
+  },
 }))
 
 export default useStore
