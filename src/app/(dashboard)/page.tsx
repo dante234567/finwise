@@ -3,26 +3,53 @@ export const dynamic = 'force-dynamic';
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import useStore from '@/store/useStore'
 import { fmt, fmtRelativa } from '@/lib/utils/format'
 import { Badge } from '@/components/ui/FlowUI'
+import { createClient } from '@/lib/supabase/client'
 
 export default function InicioPage() {
+  const router = useRouter()
+  const { movimientos, perfil, getTotalesMes, init, profileId, loading: storeLoading } = useStore()
   const [tab, setTab] = useState<'bolsillo' | 'negocio'>('bolsillo')
-  const { movimientos, perfil, getTotalesMes, init, profileId } = useStore()
+  const [sessionLoading, setSessionLoading] = useState(true)
 
-  // Simulación de usuario logueado para Demo o Auth real futuro
+  // Inicialización con Usuario Real de Supabase
   useEffect(() => {
-    if (!profileId) {
-      // ID hardcoded del perfil principal de Supabase para la integración
-      init('4f2a7b8c-9d0e-4f1a-8b2c-3d4e5f6a7b8c')
+    async function checkUser() {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        if (!user) {
+          router.push('/login')
+          return
+        }
+
+        if (!profileId) {
+          await init(user.id)
+        }
+      } catch (error) {
+        console.error('Error verificando sesión:', error)
+        router.push('/login')
+      } finally {
+        setSessionLoading(false)
+      }
     }
-  }, [profileId, init])
+
+    checkUser()
+  }, [profileId, init, router])
 
   const { ingresos, egresos, ganancia, bolsillo } = getTotalesMes()
 
   // Últimos 5 movimientos
   const recientes = movimientos.slice(0, 5)
+
+  // Skeleton de Carga
+  if (sessionLoading || (storeLoading && !profileId)) {
+    return <DashboardSkeleton />
+  }
 
   return (
     <div className="page-enter">
@@ -65,7 +92,7 @@ export default function InicioPage() {
         </div>
       </div>
 
-      <div className="px-4 pt-4 space-y-4">
+      <div className="px-4 pt-4 space-y-4 text-left">
         {tab === 'bolsillo' ? (
           <>
             {/* == Card Bolsillo ================================================ */}
@@ -123,8 +150,8 @@ export default function InicioPage() {
                 </div>
               ))}
             </div>
-            <div className="card">
-              <p className="text-xs text-navy-300 mb-3 text-center">Para ver el detalle completo del negocio</p>
+            <div className="card text-center">
+              <p className="text-xs text-navy-300 mb-3">Para ver el detalle completo del negocio</p>
               <Link href="/negocio" className="btn-primary w-full text-center block">
                 Ir a Finanzas del negocio →
               </Link>
@@ -168,6 +195,22 @@ export default function InicioPage() {
             </div>
           )}
         </div>
+      </div>
+    </div>
+  )
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="bg-navy-400 h-44 w-full rounded-b-[28px]" />
+      <div className="px-4 pt-4 space-y-4">
+        <div className="h-40 bg-navy-50 rounded-2xl w-full" />
+        <div className="grid grid-cols-2 gap-3">
+          <div className="h-20 bg-navy-50 rounded-2xl w-full" />
+          <div className="h-20 bg-navy-50 rounded-2xl w-full" />
+        </div>
+        <div className="h-48 bg-navy-50 rounded-2xl w-full" />
       </div>
     </div>
   )
