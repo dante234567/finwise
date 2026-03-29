@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
 
     const ZERO = new Prisma.Decimal('0')
 
+    // Totales del mes (vista general)
     const ingresos = transactions
       .filter((t: any) => t.type === 'INCOME')
       .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
@@ -37,9 +38,19 @@ export async function GET(request: NextRequest) {
       .filter((t: any) => t.type === 'EXPENSE')
       .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
 
-    const ganancia = ingresos.sub(egresos)
+    // Solo Negocio (para Ganancia neta y Bolsillo)
+    const ingresosNegocio = transactions
+      .filter((t: any) => t.type === 'INCOME' && t.isBusiness)
+      .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
+
+    const egresosNegocio = transactions
+      .filter((t: any) => t.type === 'EXPENSE' && t.isBusiness)
+      .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
+
+    const ganancia = ingresosNegocio.sub(egresosNegocio)
     const porcentajeBolsillo = profile ? Number(profile.targetMargin.toString()) * 100 : 35
     
+    // Bolsillo: solo si hay ganancia positiva en el negocio
     const bolsillo = ganancia.lte(ZERO)
       ? ZERO
       : ganancia.mul(new Prisma.Decimal(porcentajeBolsillo / 100))

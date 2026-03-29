@@ -7,8 +7,13 @@ import { Badge } from '../components/ui'
 
 export default function Inicio() {
   const [tab, setTab] = useState('bolsillo') // 'bolsillo' | 'negocio'
-  const { movimientos, perfil, getTotalesMes } = useStore()
+  const { movimientos, perfil, getTotalesMes, loading } = useStore()
   const { ingresos, egresos, ganancia, bolsillo } = getTotalesMes()
+
+  // ── Componente Skeleton local ─────────────────────────
+  const Skeleton = ({ className }) => (
+    <div className={`animate-pulse bg-navy-100/20 rounded-lg ${className}`} />
+  )
 
   // Últimos 5 movimientos
   const recientes = movimientos.slice(0, 5)
@@ -27,7 +32,10 @@ export default function Inicio() {
             </p>
           </div>
           {/* Notificaciones */}
-          <button className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+          <button 
+            onClick={() => alert('No tienes notificaciones pendientes')}
+            className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center active:scale-90 transition-transform"
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-4 h-4">
               <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
               <path d="M13.73 21a2 2 0 01-3.46 0" />
@@ -61,7 +69,11 @@ export default function Inicio() {
               <div className="absolute right-8 -bottom-8 w-20 h-20 rounded-full bg-white/5" />
 
               <p className="text-[11px] text-navy-200 mb-1 relative">Disponible para vos</p>
-              <p className="text-4xl font-semibold tracking-tight relative">{fmt(bolsillo)}</p>
+              {loading ? (
+                <Skeleton className="h-10 w-32 mt-1 mb-2 bg-white/10" />
+              ) : (
+                <p className="text-4xl font-semibold tracking-tight relative">{fmt(bolsillo)}</p>
+              )}
               <p className="text-xs text-navy-200 mt-1 relative">
                 {perfil.porcentajeBolsillo}% de tu ganancia neta
               </p>
@@ -69,11 +81,11 @@ export default function Inicio() {
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10 relative">
                 <div>
                   <p className="text-[10px] text-navy-200">Ganancia neta</p>
-                  <p className="text-sm font-semibold">{fmt(ganancia)}</p>
+                  {loading ? <Skeleton className="h-4 w-16 bg-white/10" /> : <p className="text-sm font-semibold">{fmt(ganancia)}</p>}
                 </div>
                 <div>
                   <p className="text-[10px] text-navy-200">Ingresado</p>
-                  <p className="text-sm font-semibold">{fmt(ingresos)}</p>
+                  {loading ? <Skeleton className="h-4 w-16 bg-white/10" /> : <p className="text-sm font-semibold">{fmt(ingresos)}</p>}
                 </div>
                 <span className="flex items-center gap-1 bg-emerald-400/20 border border-emerald-400/30 rounded-full px-2.5 py-1 text-[10px] text-emerald-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -86,11 +98,11 @@ export default function Inicio() {
             <div className="grid grid-cols-2 gap-3">
               <div className="card">
                 <p className="text-[10px] uppercase tracking-wider text-navy-200 mb-1">Ingresos del mes</p>
-                <p className="text-lg font-semibold text-navy-500">{fmt(ingresos)}</p>
+                {loading ? <Skeleton className="h-6 w-20" /> : <p className="text-lg font-semibold text-navy-500">{fmt(ingresos)}</p>}
               </div>
               <div className="card">
                 <p className="text-[10px] uppercase tracking-wider text-navy-200 mb-1">Gastos del mes</p>
-                <p className="text-lg font-semibold text-navy-500">{fmt(egresos)}</p>
+                {loading ? <Skeleton className="h-6 w-20" /> : <p className="text-lg font-semibold text-navy-500">{fmt(egresos)}</p>}
               </div>
             </div>
           </>
@@ -125,7 +137,20 @@ export default function Inicio() {
             <Link to="/gastos" className="text-[11px] text-navy-300">Ver cuentas</Link>
           </div>
 
-          {recientes.length === 0 ? (
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <Skeleton className="w-8 h-8 rounded-xl" />
+                  <div className="flex-1 space-y-1">
+                    <Skeleton className="h-3 w-3/4" />
+                    <Skeleton className="h-2 w-1/2" />
+                  </div>
+                  <Skeleton className="h-4 w-12" />
+                </div>
+              ))}
+            </div>
+          ) : recientes.length === 0 ? (
             <p className="text-xs text-navy-200 text-center py-4">Sin movimientos aún</p>
           ) : (
             <div className="space-y-3">

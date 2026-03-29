@@ -80,6 +80,7 @@ const useStore = create((set, get) => ({
   fetchDashboard: async () => {
     const profileId = get().profileId
     if (!profileId) return
+    set({ loading: true })
     try {
       const res = await fetch(`${API}/api/dashboard?profileId=${profileId}`)
       const { success, data } = await res.json()
@@ -93,7 +94,10 @@ const useStore = create((set, get) => ({
           },
         })
       }
-    } catch {}
+    } catch {
+    } finally {
+      set({ loading: false })
+    }
   },
 
   addMovimiento: async (mov) => {
