@@ -159,6 +159,42 @@ export default function Negocio() {
               )}
             </div>
 
+          </>
+        ) : (
+          <>
+            {/* Botón nuevo presupuesto */}
+            <button onClick={() => setModalNuevo(true)} className="btn-primary w-full flex items-center justify-center gap-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Nuevo presupuesto
+            </button>
+
+            {/* Lista de presupuestos */}
+            {presupuestos.length === 0 ? (
+              <EmptyState icon="📋" title="Sin presupuestos" subtitle="Creá tu primer presupuesto" />
+            ) : (
+              <div className="space-y-3">
+                {presupuestos.map((p) => (
+                  <div key={p.id} className="card" onClick={() => setModalDetalle(p)}>
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="text-sm font-semibold text-navy-500">{p.cliente}</p>
+                        <p className="text-[10px] text-navy-200 mt-0.5">{fmtFecha(p.fecha)}</p>
+                      </div>
+                      <Badge estado={p.estado} />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-navy-200">{p.items.length} ítem{p.items.length !== 1 ? 's' : ''}</span>
+                      <span className="text-sm font-semibold text-navy-400">{fmt(totalPresupuesto(p.items))}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
 <div className="card">
   <div className="flex items-center justify-between mb-3">
     <h2 className="text-sm font-semibold text-navy-500">Diagnóstico fiscal</h2>
@@ -213,41 +249,6 @@ export default function Negocio() {
     </div>
   </div>
 </div>
-          </>
-        ) : (
-          <>
-            {/* Botón nuevo presupuesto */}
-            <button onClick={() => setModalNuevo(true)} className="btn-primary w-full flex items-center justify-center gap-2">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              Nuevo presupuesto
-            </button>
-
-            {/* Lista de presupuestos */}
-            {presupuestos.length === 0 ? (
-              <EmptyState icon="📋" title="Sin presupuestos" subtitle="Creá tu primer presupuesto" />
-            ) : (
-              <div className="space-y-3">
-                {presupuestos.map((p) => (
-                  <div key={p.id} className="card" onClick={() => setModalDetalle(p)}>
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="text-sm font-semibold text-navy-500">{p.cliente}</p>
-                        <p className="text-[10px] text-navy-200 mt-0.5">{fmtFecha(p.fecha)}</p>
-                      </div>
-                      <Badge estado={p.estado} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-navy-200">{p.items.length} ítem{p.items.length !== 1 ? 's' : ''}</span>
-                      <span className="text-sm font-semibold text-navy-400">{fmt(totalPresupuesto(p.items))}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        )}
       </div>
 
       {/* ── Modal Nuevo Presupuesto ──────────────────────────────────────────── */}
