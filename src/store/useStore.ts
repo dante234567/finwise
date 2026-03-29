@@ -56,6 +56,13 @@ interface StoreState {
   fetchBreakeven: () => Promise<void>
   getTotalesMes: () => { ingresos: number; egresos: number; ganancia: number; bolsillo: number }
   getGastosPorCategoria: () => Array<{ nombre: string; presupuesto: number; color: string; gastado: number }>
+  getDiagnosticoNegocio: () => {
+    Ventas: number
+    Cf: number
+    Cv: number
+    MC: number
+    PuntoEquilibrio: number
+  }
   updatePerfil: (data: Partial<Perfil>) => void
 }
 
@@ -266,6 +273,31 @@ const useStore = create<StoreState>((set, get) => ({
   },
 
   updatePerfil: (data: Partial<Perfil>) => set((s) => ({ perfil: { ...s.perfil, ...data } })),
+
+  getDiagnosticoNegocio: () => {
+    const movs = get().movimientos
+    
+    // Sumatorias base
+    const Ventas = movs
+      .filter((m) => m.tipo === 'ingreso')
+      .reduce((acc, m) => acc + m.monto, 0)
+    
+    const Cf = movs
+      .filter((m) => m.tipo === 'egreso' && m.isFixed)
+      .reduce((acc, m) => acc + m.monto, 0)
+      
+    const Cv = movs
+      .filter((m) => m.tipo === 'egreso' && !m.isFixed)
+      .reduce((acc, m) => acc + m.monto, 0)
+
+    // Análisis Operativo
+    const MC = Ventas > 0 ? (Ventas - Cv) / Ventas : 0
+    
+    // Punto de Equilibrio con salvaguarda didáctica
+    const PuntoEquilibrio = (MC > 0 && Cf > 0) ? (Cf / MC) : (Cf * 1.5)
+
+    return { Ventas, Cf, Cv, MC, PuntoEquilibrio }
+  },
 
   getDistribucionGanancias: () => {
     const movs = get().movimientos
