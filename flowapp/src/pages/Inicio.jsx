@@ -79,18 +79,18 @@ export default function Inicio() {
                 {perfil.porcentajeBolsillo}% de tu ganancia neta
               </p>
 
-              {dist.reservaARCA > 0 && (
-                <div className="mt-3 pt-3 border-t border-white/10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-orange-300">Reserva ARCA estimada</span>
-                    <span className="text-[10px] font-semibold text-orange-300">-{fmt(dist.reservaARCA)}</span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-[10px] text-emerald-300">Ganancia neta real</span>
-                    <span className="text-[10px] font-semibold text-emerald-300">{fmt(dist.gananciaNeta)}</span>
-                  </div>
-                </div>
-              )}
+{dist.reservaARCA > 0 && (
+  <div className="mt-3 pt-3 border-t border-white/10">
+    <div className="flex items-center justify-between">
+      <span className="text-[10px] text-orange-300">Reserva ARCA estimada</span>
+      <span className="text-[10px] font-semibold text-orange-300">-{fmt(dist.reservaARCA)}</span>
+    </div>
+    <div className="flex items-center justify-between mt-1">
+      <span className="text-[10px] text-emerald-300">Ganancia neta real</span>
+      <span className="text-[10px] font-semibold text-emerald-300">{fmt(dist.gananciaNeta)}</span>
+    </div>
+  </div>
+)}
 
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10 relative">
                 <div>
