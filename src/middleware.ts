@@ -1,9 +1,10 @@
 // Middleware de Next.js — protección de rutas y refresh de sesión Supabase
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  // Bypass total de sesión para la demo
+  return NextResponse.next()
 }
 
 export const config = {

@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import useStore from '@/store/useStore'
-import { signOut } from '@/actions/auth'
-import { LogOut, User, Mail, Wallet, Save, Loader2, Info } from 'lucide-react'
+import { Zap, User, Mail, Wallet, Save, Loader2, Info } from 'lucide-react'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -48,10 +47,7 @@ export default function SettingsPage() {
     }
   }
 
-  const handleLogout = async () => {
-    await signOut()
-  }
-
+  // Redirección de salida (Reset ya manejado por el nuevo botón)
   if (loading && !profileId) return <SettingsSkeleton />
 
   return (
@@ -136,11 +132,16 @@ export default function SettingsPage() {
           </button>
           
           <button 
-            className="w-full flex items-center justify-center gap-2 py-3.5 text-red-500 bg-white border border-red-100 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-red-50 active:scale-95 transition-all text-center"
-            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 py-3.5 text-navy-400 bg-white border border-navy-100 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-navy-50 active:scale-95 transition-all text-center"
+            onClick={() => {
+              if (confirm('¿Reiniciar todo el sistema? Se borrarán los datos de esta sesión.')) {
+                localStorage.clear();
+                window.location.reload();
+              }
+            }}
           >
-            <LogOut size={16} />
-            Cerrar Sesión
+            <Zap size={16} className="text-emerald-500" />
+            Reiniciar Demo (Reset)
           </button>
         </div>
       </div>

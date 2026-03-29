@@ -15,31 +15,14 @@ export default function InicioPage() {
   const [tab, setTab] = useState<'bolsillo' | 'negocio'>('bolsillo')
   const [sessionLoading, setSessionLoading] = useState(true)
 
-  // Inicialización con Usuario Real de Supabase
+  // Verificación de Estado para Demo
   useEffect(() => {
-    async function checkUser() {
-      try {
-        const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        
-        if (!user) {
-          router.push('/login')
-          return
-        }
-
-        if (!profileId) {
-          await init(user.id)
-        }
-      } catch (error) {
-        console.error('Error verificando sesión:', error)
-        router.push('/login')
-      } finally {
-        setSessionLoading(false)
-      }
+    if (!profileId) {
+      router.push('/welcome')
+      return
     }
-
-    checkUser()
-  }, [profileId, init, router])
+    setSessionLoading(false)
+  }, [profileId, router])
 
   const { ingresosTotales, egresosTotales, gananciaBruta, sueldoRetenido, gananciaNetaNegocio } = getDistribucionGanancias()
 

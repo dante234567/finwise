@@ -47,7 +47,7 @@ interface StoreState {
     gananciaNetaNegocio: number
   }
 
-  init: (authUserId: string) => Promise<void>
+  init: (authUserId?: string) => Promise<void>
   fetchMovimientos: () => Promise<void>
   fetchDashboard: () => Promise<void>
   fetchMetrics: () => Promise<void>
@@ -94,14 +94,14 @@ const useStore = create<StoreState>((set, get) => ({
   porcentajeSueldo: 0,
   setPorcentajeSueldo: (porcentaje: number) => set({ porcentajeSueldo: porcentaje }),
 
-  init: async (authUserId: string) => {
-    if (!authUserId) return
+  init: async (authUserId?: string) => {
+    const id = authUserId || 'demo-guest-user'
     set({ loading: true })
     try {
       const res = await fetch(`/api/profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ authUserId }),
+        body: JSON.stringify({ authUserId: id }),
       })
 
       if (!res.ok) {
