@@ -70,18 +70,27 @@ export default function BottomNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-navy-100 flex safe-bottom"
          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {TABS.map((tab) => {
+        // Evaluación directa de la ruta para garantizar sincronización absoluta
         const isActive = pathname === tab.href
+
         return (
           <Link
             key={tab.href}
             href={tab.href}
             className={cn(
-              "flex-1 flex flex-col items-center gap-0.5 py-2.5 transition-colors",
-              isActive ? "text-navy-400" : "text-navy-200"
+              "flex-1 flex flex-col items-center gap-0.5 py-2.5 transition-all duration-200",
+              isActive ? "text-navy-500 bg-navy-50/30" : "text-navy-200"
             )}
           >
-            {tab.icon}
-            <span className="text-[9px] font-medium">{tab.label}</span>
+            <div className={cn("transition-transform duration-200", isActive && "scale-110")}>
+              {tab.icon}
+            </div>
+            <span className={cn(
+              "text-[9px] transition-all",
+              isActive ? "font-bold text-navy-500 scale-105" : "font-medium"
+            )}>
+              {tab.label}
+            </span>
           </Link>
         )
       })}
