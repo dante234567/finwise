@@ -1,4 +1,4 @@
-// ─── Página Negocio ────────────────────────────────────────────────────────────
+﻿// ─── Página Negocio ────────────────────────────────────────────────────────────
 import React, { useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import useStore from '../context/store'
@@ -408,3 +408,4 @@ function ModalDetallePresupuesto({ presupuesto: p, perfil, onClose, onUpdateEsta
     </Modal>
   )
 }
+
