@@ -25,7 +25,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 page-enter">
       <div className="w-full max-w-sm space-y-8">
-        {/* Header con Logo */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <div className="w-14 h-14 bg-navy-500 rounded-2xl flex items-center justify-center shadow-lg shadow-navy-500/20">
@@ -38,7 +37,6 @@ export default function LoginPage() {
           <p className="text-sm text-navy-200 mt-2">Gestioná tu negocio con inteligencia</p>
         </div>
 
-        {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-navy-400 ml-1">Email</label>
@@ -65,7 +63,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+            <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-center">
               <p className="text-xs text-red-600 font-medium">{error}</p>
             </div>
           )}
@@ -83,7 +81,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Footer */}
         <p className="text-center text-sm text-navy-300">
           ¿No tenés cuenta?{' '}
           <Link href="/register" className="text-navy-500 font-semibold hover:underline">

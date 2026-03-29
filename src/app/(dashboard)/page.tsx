@@ -48,7 +48,19 @@ export default function InicioPage() {
 
   // Skeleton de Carga
   if (sessionLoading || (storeLoading && !profileId)) {
-    return <DashboardSkeleton />
+    return (
+      <div className="animate-pulse">
+        <div className="bg-navy-400 h-44 w-full rounded-b-[28px]" />
+        <div className="px-4 pt-4 space-y-4">
+          <div className="h-40 bg-navy-50 rounded-2xl w-full" />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="h-20 bg-navy-50 rounded-2xl w-full" />
+            <div className="h-20 bg-navy-50 rounded-2xl w-full" />
+          </div>
+          <div className="h-48 bg-navy-50 rounded-2xl w-full" />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -97,7 +109,6 @@ export default function InicioPage() {
           <>
             {/* == Card Bolsillo ================================================ */}
             <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-navy-400 to-navy-500 p-5 text-white shadow-lg">
-              {/* Círculo decorativo */}
               <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/10" />
               <div className="absolute right-8 -bottom-8 w-20 h-20 rounded-full bg-white/5" />
 
@@ -123,7 +134,6 @@ export default function InicioPage() {
               </div>
             </div>
 
-            {/* == Métricas rápidas ============================================= */}
             <div className="grid grid-cols-2 gap-3">
               <div className="card">
                 <p className="text-[10px] uppercase tracking-wider text-navy-200 mb-1">Ingresos del mes</p>
@@ -137,7 +147,6 @@ export default function InicioPage() {
           </>
         ) : (
           <>
-            {/* == Vista Negocio resumida ======================================= */}
             <div className="grid grid-cols-3 gap-2">
               {[
                 { label: 'Ingresos', value: fmt(ingresos), color: 'text-emerald-600' },
@@ -151,7 +160,7 @@ export default function InicioPage() {
               ))}
             </div>
             <div className="card text-center">
-              <p className="text-xs text-navy-300 mb-3">Para ver el detalle completo del negocio</p>
+              <p className="text-xs text-navy-300 mb-3">Ver el detalle completo del negocio</p>
               <Link href="/negocio" className="btn-primary w-full text-center block">
                 Ir a Finanzas del negocio →
               </Link>
@@ -159,7 +168,6 @@ export default function InicioPage() {
           </>
         )}
 
-        {/* == Últimos movimientos =============================================== */}
         <div className="card pb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-navy-500">Últimos movimientos</h2>
@@ -167,7 +175,10 @@ export default function InicioPage() {
           </div>
 
           {recientes.length === 0 ? (
-            <p className="text-xs text-navy-200 text-center py-4">Sin movimientos aún</p>
+            <p className="text-xs text-navy-200 text-center py-8">
+              Sin movimientos aún.<br/>
+              Usá el botón ⚡ para cargar datos de demo.
+            </p>
           ) : (
             <div className="space-y-4">
               {recientes.map((mov) => (
@@ -195,22 +206,6 @@ export default function InicioPage() {
             </div>
           )}
         </div>
-      </div>
-    </div>
-  )
-}
-
-function DashboardSkeleton() {
-  return (
-    <div className="animate-pulse">
-      <div className="bg-navy-400 h-44 w-full rounded-b-[28px]" />
-      <div className="px-4 pt-4 space-y-4">
-        <div className="h-40 bg-navy-50 rounded-2xl w-full" />
-        <div className="grid grid-cols-2 gap-3">
-          <div className="h-20 bg-navy-50 rounded-2xl w-full" />
-          <div className="h-20 bg-navy-50 rounded-2xl w-full" />
-        </div>
-        <div className="h-48 bg-navy-50 rounded-2xl w-full" />
       </div>
     </div>
   )

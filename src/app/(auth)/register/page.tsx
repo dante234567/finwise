@@ -7,7 +7,6 @@ import { signUp } from '@/actions/auth'
 export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -18,36 +17,13 @@ export default function RegisterPage() {
     const result = await signUp(formData)
 
     if (result?.error) {
-      setError(result.error)
-      setLoading(false)
-    } else if (result?.requiresConfirmation) {
-      setSuccess(true)
+      if (result.error.includes('User already registered')) {
+        setError('Este email ya está en uso. ¿Querés iniciar sesión?')
+      } else {
+        setError(result.error)
+      }
       setLoading(false)
     }
-  }
-
-  // Vista de éxito (Confirmación pendiente)
-  if (success) {
-    return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 page-enter text-center">
-        <div className="w-full max-w-sm space-y-6">
-          <div className="flex justify-center">
-            <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100">
-              <span className="text-3xl text-emerald-500">📧</span>
-            </div>
-          </div>
-          <h1 className="text-2xl font-bold text-navy-500">¡Casi listo!</h1>
-          <p className="text-sm text-navy-300">
-            Enviamos un link de confirmación a tu email. Por favor, revisalo para activar tu cuenta.
-          </p>
-          <div className="pt-4">
-            <Link href="/login" className="btn-primary w-full py-3.5 block text-center">
-              Volver al inicio
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -99,7 +75,12 @@ export default function RegisterPage() {
 
           {error && (
             <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3">
-              <p className="text-xs text-red-600 font-medium">{error}</p>
+              <p className="text-xs text-red-600 font-medium">
+                {error}
+                {error.includes('iniciar sesión') && (
+                  <Link href="/login" className="ml-1 underline">Ingresar aquí</Link>
+                )}
+              </p>
             </div>
           )}
 

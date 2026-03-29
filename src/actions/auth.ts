@@ -7,13 +7,10 @@ import { redirect } from 'next/navigation'
  * Inicia sesión con email y contraseña
  */
 export async function signIn(formData: FormData) {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
   const supabase = await createClient()
-
   const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
   })
 
   if (error) {
@@ -25,20 +22,19 @@ export async function signIn(formData: FormData) {
 
 /**
  * Registra un nuevo usuario con nombre, email y contraseña
+ * Redirige inmediatamente tras el registro exitoso (Modo Hackathon)
  */
 export async function signUp(formData: FormData) {
+  const supabase = await createClient()
   const nombre = formData.get('nombre') as string
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const supabase = await createClient()
 
-  const { data, error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: {
-        nombre,
-      },
+    options: { 
+      data: { nombre } 
     },
   })
 
@@ -46,13 +42,8 @@ export async function signUp(formData: FormData) {
     return { error: error.message }
   }
 
-  // Si la sesión es inmediata (ej: confirmación deshabilitada), redirigimos
-  if (data.session) {
-    redirect('/')
-  }
-
-  // Si requiere confirmación de email
-  return { success: true, requiresConfirmation: true }
+  // Redirección inmediata asumiendo que "Email confirmation" está desactivado en Supabase
+  redirect('/')
 }
 
 /**

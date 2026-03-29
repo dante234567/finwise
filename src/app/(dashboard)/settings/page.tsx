@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import useStore from '@/store/useStore'
-import { IconBtn } from '@/components/ui/FlowUI'
-import { LogOut, User, Mail, Wallet, Save } from 'lucide-react'
+import { signOut } from '@/actions/auth'
+import { LogOut, User, Mail, Wallet, Save, Loader2, Info } from 'lucide-react'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -47,22 +47,21 @@ export default function SettingsPage() {
     }
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('finwise_profile_id')
-    router.push('/login')
+  const handleLogout = async () => {
+    await signOut()
   }
 
-  if (loading) return <SettingsSkeleton />
+  if (loading && !profileId) return <SettingsSkeleton />
 
   return (
-    <div className="page-enter">
+    <div className="page-enter pb-20">
       <div className="bg-navy-500 px-5 pt-12 pb-6 rounded-b-[28px]">
         <h1 className="text-white text-lg font-semibold">Configuración</h1>
         <p className="text-navy-200 text-xs">Personalizá tu perfil y objetivos</p>
       </div>
 
-      <div className="px-4 pt-4 space-y-4 pb-20">
-        {/* Sección Perfil */}
+      <div className="px-4 pt-4 space-y-4 text-left">
+        {/* Datos Personales */}
         <div className="card space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <User size={16} className="text-navy-300" />
@@ -70,7 +69,7 @@ export default function SettingsPage() {
           </div>
           
           <div className="space-y-1.5">
-            <label className="text-xs text-navy-200 ml-1">Nombre del Perfil</label>
+            <label className="text-xs text-navy-200 ml-1 font-semibold">Nombre del Perfil</label>
             <input 
               type="text" 
               className="input-base" 
@@ -79,17 +78,9 @@ export default function SettingsPage() {
               placeholder="Ej: Mi Negocio"
             />
           </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs text-navy-200 ml-1">Email (Sólo lectura)</label>
-            <div className="flex items-center gap-3 bg-navy-50 px-4 py-3 rounded-xl border border-navy-100/50">
-              <Mail size={16} className="text-navy-200" />
-              <span className="text-sm text-navy-300">{perfil.email || 'usuario@ejemplo.com'}</span>
-            </div>
-          </div>
         </div>
 
-        {/* Sección Objetivos */}
+        {/* Objetivo de Ahorro */}
         <div className="card space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Wallet size={16} className="text-navy-300" />
@@ -100,9 +91,9 @@ export default function SettingsPage() {
             <div className="flex justify-between items-end">
               <div>
                 <p className="text-sm font-semibold text-navy-500">Porcentaje "Bolsillo"</p>
-                <p className="text-[10px] text-navy-200 italic">Qué % de la ganancia retirás para gastos personales</p>
+                <p className="text-[10px] text-navy-200 italic leading-tight">Qué % de la ganancia neta retirás para gastos personales</p>
               </div>
-              <span className="text-xl font-bold text-navy-500">{porcentaje}%</span>
+              <span className="text-xl font-bold text-navy-500 shrink-0 ml-2">{porcentaje}%</span>
             </div>
             
             <input 
@@ -115,29 +106,29 @@ export default function SettingsPage() {
               onChange={(e) => setPorcentaje(Number(e.target.value))}
             />
             
-            <div className="flex justify-between text-[10px] text-navy-200 px-1">
+            <div className="flex justify-between text-[10px] text-navy-200 px-1 font-medium italic">
               <span>Conservador (10%)</span>
               <span>Agresivo (80%)</span>
             </div>
           </div>
         </div>
 
-        {/* Acciones */}
+        {/* Info y Acciones */}
         <div className="pt-2 space-y-3">
           <button 
-            className="btn-primary w-full flex items-center justify-center gap-2"
+            className="btn-primary w-full flex items-center justify-center gap-2 py-4"
             onClick={handleSave}
             disabled={saving}
           >
-            <Save size={18} />
+            {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
             {saving ? 'Guardando...' : 'Guardar Cambios'}
           </button>
           
           <button 
-            className="btn-secondary w-full flex items-center justify-center gap-2 text-red-500 border-red-100"
+            className="w-full flex items-center justify-center gap-2 py-3.5 text-red-500 bg-white border border-red-100 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-red-50 active:scale-95 transition-all text-center"
             onClick={handleLogout}
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             Cerrar Sesión
           </button>
         </div>
@@ -153,7 +144,6 @@ function SettingsSkeleton() {
       <div className="px-4 pt-4 space-y-4">
         <div className="h-48 bg-navy-50 rounded-2xl w-full" />
         <div className="h-48 bg-navy-50 rounded-2xl w-full" />
-        <div className="h-12 bg-navy-50 rounded-2xl w-full" />
       </div>
     </div>
   )

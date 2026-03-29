@@ -33,12 +33,14 @@ interface StoreState {
   movimientos: Movimiento[]
   totalesMes: { ingresos: number; egresos: number; ganancia: number; bolsillo: number }
   breakeven: Breakeven | null | { error: string; code: string }
+  metrics: any | null
   loading: boolean
   error: string | null
 
   init: (authUserId: string) => Promise<void>
   fetchMovimientos: () => Promise<void>
   fetchDashboard: () => Promise<void>
+  fetchMetrics: () => Promise<void>
   addMovimiento: (mov: any) => Promise<any>
   deleteMovimiento: (id: string) => Promise<any>
   fetchBreakeven: () => Promise<void>
@@ -69,11 +71,13 @@ const useStore = create<StoreState>((set, get) => ({
   movimientos: [],
   totalesMes: { ingresos: 0, egresos: 0, ganancia: 0, bolsillo: 0 },
   breakeven: null,
+  metrics: null,
   loading: false,
   error: null,
 
   init: async (authUserId: string) => {
     if (!authUserId) return
+    set({ loading: true })
     try {
       const res = await fetch(`/api/profile`, {
         method: 'POST',
@@ -93,18 +97,24 @@ const useStore = create<StoreState>((set, get) => ({
       set({
         profileId: data.id,
         perfil: {
-          nombre: 'Usuario',
+          nombre: data.nombre || 'Usuario',
           email: '',
           plan: 'Pro',
-          porcentajeBolsillo: Number(data.targetMargin) * 100,
+          porcentajeBolsillo: Number(data.targetMargin) * 100 || 35,
           moneda: 'ARS',
         },
       })
-      await get().fetchMovimientos()
-      await get().fetchDashboard()
+      
+      await Promise.all([
+        get().fetchMovimientos(),
+        get().fetchDashboard(),
+        get().fetchMetrics()
+      ])
     } catch (err: any) {
       console.error('[store.init] Error:', err)
-      alert(err.message)
+      set({ error: err.message })
+    } finally {
+      set({ loading: false })
     }
   },
 
@@ -114,12 +124,7 @@ const useStore = create<StoreState>((set, get) => ({
     set({ loading: true })
     try {
       const res = await fetch(`/api/transactions?profileId=${profileId}`)
-
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Error HTTP al cargar movimientos')
-      }
-
+      if (!res.ok) throw new Error('Error al cargar movimientos')
       const { success, data } = await res.json()
       if (success && Array.isArray(data)) {
         const movimientos: Movimiento[] = data.map((t: any) => ({
@@ -135,7 +140,6 @@ const useStore = create<StoreState>((set, get) => ({
         set({ movimientos, error: null })
       }
     } catch (err: any) {
-      alert(err.message)
       set({ error: err.message })
     } finally {
       set({ loading: false })
@@ -147,20 +151,15 @@ const useStore = create<StoreState>((set, get) => ({
     if (!profileId) return
     try {
       const res = await fetch(`/api/dashboard?profileId=${profileId}`)
-
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Error HTTP al cargar dashboard')
-      }
-
+      if (!res.ok) throw new Error('Error al cargar dashboard')
       const { success, data } = await res.json()
       if (success) {
         set({
           totalesMes: {
-            ingresos: Number(data.ingresos),
-            egresos: Number(data.egresos),
-            ganancia: Number(data.ganancia),
-            bolsillo: Number(data.bolsillo),
+            ingresos: Number(data.ingresos) || 0,
+            egresos: Number(data.egresos) || 0,
+            ganancia: Number(data.ganancia) || 0,
+            bolsillo: Number(data.bolsillo) || 0,
           },
         })
       }
@@ -169,44 +168,44 @@ const useStore = create<StoreState>((set, get) => ({
     }
   },
 
+  fetchMetrics: async () => {
+    const profileId = get().profileId || getStoredProfileId()
+    if (!profileId) return
+    try {
+      const res = await fetch(`/api/metrics?profileId=${profileId}`)
+      if (!res.ok) throw new Error('Error al cargar métricas')
+      const { success, data } = await res.json()
+      if (success) set({ metrics: data })
+    } catch (err: any) {
+      console.error('[store.fetchMetrics] Error:', err)
+    }
+  },
+
   addMovimiento: async (mov: any) => {
     const profileId = get().profileId || getStoredProfileId()
-    if (!profileId) {
-      alert('Sin ID de Perfil. Por favor, reinicia la aplicación.')
-      return { success: false, error: 'Sin perfil' }
-    }
-
-    // Sanitización Estricta (Zod Compliance)
+    if (!profileId) return { success: false, error: 'Sin perfil' }
     const input = {
       profileId,
-      amount: String(Number(mov.monto)), // Garantiza validación estricta decimal
+      amount: String(Number(mov.monto)),
       type: mov.tipo === 'ingreso' ? 'INCOME' : 'EXPENSE',
-      concept: mov.descripcion, // Mapeo a nombre de BD
+      concept: mov.descripcion,
       quantity: 1,
-      isFixed: !!mov.isFixed, // Fuerza booleano
-      isBusiness: !!mov.isBusiness, // Fuerza booleano
+      isFixed: !!mov.isFixed,
+      isBusiness: !!mov.isBusiness,
     }
-
     try {
       const res = await fetch(`/api/transactions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input),
       })
-
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Error HTTP al registrar movimiento')
-      }
-
+      if (!res.ok) throw new Error('Error al registrar movimiento')
       const result = await res.json()
       if (result.success) {
-        await get().fetchMovimientos()
-        await get().fetchDashboard()
+        await Promise.all([get().fetchMovimientos(), get().fetchDashboard()])
       }
       return result
     } catch (error: any) {
-      alert(error.message)
       return { success: false, error: error.message }
     }
   },
@@ -214,20 +213,13 @@ const useStore = create<StoreState>((set, get) => ({
   deleteMovimiento: async (id: string) => {
     try {
       const res = await fetch(`/api/transactions?id=${id}`, { method: 'DELETE' })
-
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Error HTTP al eliminar')
-      }
-
+      if (!res.ok) throw new Error('Error al eliminar')
       const result = await res.json()
       if (result.success) {
-        await get().fetchMovimientos()
-        await get().fetchDashboard()
+        await Promise.all([get().fetchMovimientos(), get().fetchDashboard()])
       }
       return result
     } catch (error: any) {
-      alert(error.message)
       return { success: false, error: error.message }
     }
   },
@@ -237,12 +229,7 @@ const useStore = create<StoreState>((set, get) => ({
     if (!profileId) return
     try {
       const res = await fetch(`/api/breakeven?profileId=${profileId}`)
-
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Error HTTP al calcular breakeven')
-      }
-
+      if (!res.ok) throw new Error('Error al calcular breakeven')
       const { success, data, error, code } = await res.json()
       set({ breakeven: success ? data : { error, code } })
     } catch (err: any) {
@@ -255,9 +242,9 @@ const useStore = create<StoreState>((set, get) => ({
   getGastosPorCategoria: () => {
     const movs = get().movimientos.filter((m) => m.tipo === 'egreso')
     return [
-      { nombre: 'Fijo',     presupuesto: 200000, color: '#3b82d4' },
-      { nombre: 'Variable', presupuesto: 150000, color: '#1a4a8c' },
-      { nombre: 'Personal', presupuesto: 50000,  color: '#85b7eb' },
+      { nombre: 'Fijo',     presupuesto: 0, color: '#3b82d4' },
+      { nombre: 'Variable', presupuesto: 0, color: '#1a4a8c' },
+      { nombre: 'Personal', presupuesto: 0, color: '#85b7eb' },
     ].map((cat) => ({
       ...cat,
       gastado: movs.filter((m) => m.categoria === cat.nombre).reduce((a, m) => a + m.monto, 0),

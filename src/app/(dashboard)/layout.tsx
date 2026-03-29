@@ -2,6 +2,7 @@
 
 import React from 'react'
 import BottomNav from '@/components/layout/BottomNav'
+import DemoButton from '@/components/ui/DemoButton'
 
 /**
  * Layout compartido de Dashboard
@@ -17,6 +18,7 @@ export default function DashboardLayout({
       {/* Contenido de cada página */}
       <main className="flex-1 pb-20 max-w-md mx-auto w-full">
         {children}
+        <DemoButton />
       </main>
 
       {/* Navegación inferior fija */}

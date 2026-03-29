@@ -1,98 +1,94 @@
 'use client'
 
 import React from 'react'
-import { Badge } from '@/components/ui/FlowUI'
-import { BookOpen, GraduationCap, TrendingUp, DollarSign, PieChart, ShieldCheck } from 'lucide-react'
+import { Badge, Divider } from '@/components/ui/FlowUI'
+import { BookOpen, HelpCircle, DollarSign, Calculator, Percent, TrendingUp } from 'lucide-react'
+
+const MODULOS = [
+  {
+    icon: <Calculator className="text-navy-400" size={24} />,
+    title: "¿Qué es el punto de equilibrio?",
+    description: "Es el nivel de ventas que cubre todos tus costos (fijos y variables). En Argentina, con inflación, recalculalo mes a mes.",
+    estado: 'aprobado',
+    label: 'Disponible'
+  },
+  {
+    icon: <DollarSign className="text-navy-400" size={24} />,
+    title: "Costos fijos vs variables",
+    description: "Alquiler y monotributo son fijos. Harina y packaging son variables. Entender esto es clave para tus márgenes.",
+    estado: 'aprobado',
+    label: 'Disponible'
+  },
+  {
+    icon: <Percent className="text-navy-400" size={24} />,
+    title: "¿Cómo calcular mi precio?",
+    description: "No solo es costo + margen. Considerá impuestos, comisiones de apps y tu propio sueldo (el 'bolsillo').",
+    estado: 'aprobado',
+    label: 'Disponible'
+  },
+  {
+    icon: <TrendingUp className="text-navy-400" size={24} />,
+    title: "Inflación y tu negocio",
+    description: "Estrategias para ajustar precios sin espantar clientes y mantener el poder de compra de tu ganancia.",
+    estado: 'pendiente',
+    label: 'Próximamente'
+  },
+  {
+    icon: <BookOpen className="text-navy-400" size={24} />,
+    title: "La regla del porcentaje",
+    description: "Separar las finanzas personales de las del negocio es vital. Define un % de ganancia para vos y no toques el resto.",
+    estado: 'pendiente',
+    label: 'Próximamente'
+  }
+]
 
 export default function LearnPage() {
-  const modulos = [
-    {
-      id: 1,
-      titulo: "¿Qué es el punto de equilibrio?",
-      desc: "Aprendé cuánto necesitás facturar exactamente para cubrir todos tus costos antes de empezar a ganar.",
-      icon: "⚖️",
-      status: "disponible",
-      contenido: "Ejemplo: Si tenés $200.000 de costos fijos y ganás un 40% por producto, tu punto de equilibrio son $500.000."
-    },
-    {
-      id: 2,
-      titulo: "Costos fijos vs variables",
-      desc: "Diferenciá el alquiler y luz (fijos) de la materia prima y comisiones (variables) en la economía argentina.",
-      icon: "📊",
-      status: "disponible",
-      contenido: "Estrategia: En meses de baja venta, tratá de reducir al máximo tus costos fijos para no entrar en pérdida."
-    },
-    {
-      id: 3,
-      titulo: "¿Cómo calcular mi precio de venta?",
-      desc: "Usá la fórmula matemática correcta: Costo / (1 - Margen deseado) para no perder plata sin darte cuenta.",
-      icon: "🏷️",
-      status: "disponible",
-      contenido: "Fórmula Pro: No multipliques el costo por 1.40, dividilo por 0.60 para ganar un 40% REAL sobre el precio final."
-    },
-    {
-      id: 4,
-      titulo: "Inflación y tu negocio",
-      desc: "Cómo ajustar tus precios siguiendo el IPC sin espantar a tus clientes y manteniendo tu rentabilidad.",
-      icon: "📈",
-      status: "próximamente",
-      contenido: null
-    },
-    {
-      id: 5,
-      titulo: "Bolsillo vs Reinversión",
-      desc: "¿Cuánto te podés llevar a casa? Definí un sueldo fijo y cuánto dejar en la caja para que el negocio crezca.",
-      icon: "💰",
-      status: "próximamente",
-      contenido: null
-    }
-  ]
-
   return (
-    <div className="page-enter">
-      {/* Header */}
+    <div className="page-enter pb-24">
       <div className="bg-navy-500 px-5 pt-12 pb-6 rounded-b-[28px]">
-        <div className="flex items-center gap-3 mb-2">
-          <GraduationCap className="text-navy-100" size={24} />
-          <h1 className="text-white text-lg font-semibold">Educación Financiera</h1>
+        <div className="flex items-center gap-2 mb-1">
+          <BookOpen size={18} className="text-navy-200" />
+          <h1 className="text-white text-lg font-semibold">Aprendé con FinWise</h1>
         </div>
-        <p className="text-navy-200 text-xs">Aprender a gestionar es el primer paso para crecer.</p>
+        <p className="text-navy-200 text-xs">Conceptos clave para potenciar tu emprendimiento</p>
       </div>
 
-      <div className="px-4 pt-4 space-y-4 pb-20">
-        <div className="card bg-navy-50 border-none flex items-start gap-3">
-          <BookOpen className="text-navy-400 shrink-0" size={18} />
-          <p className="text-[11px] text-navy-400 leading-relaxed">
-            Explorá los módulos interactivos diseñados para emprendedores argentinos. 
-            Hacé click en cada uno para ver tips rápidos.
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          {modulos.map((m) => (
-            <div key={m.id} className="card group active:scale-[0.98] transition-all">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{m.icon}</span>
-                  <div className="pr-4">
-                    <h3 className="text-sm font-bold text-navy-500">{m.titulo}</h3>
-                    <p className="text-[11px] text-navy-300 leading-snug mt-1">{m.desc}</p>
+      <div className="px-4 pt-4 space-y-4 text-left">
+        {MODULOS.map((modulo, i) => (
+          <div key={i} className="card group active:scale-[0.98] transition-all">
+            <div className="flex gap-4">
+               <div className="w-12 h-12 rounded-2xl bg-navy-50 flex items-center justify-center shrink-0 group-hover:bg-navy-100 transition-colors">
+                  {modulo.icon}
+               </div>
+               <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start mb-1">
+                     <h3 className="text-sm font-bold text-navy-500 leading-snug">{modulo.title}</h3>
+                     <Badge estado={modulo.estado} />
                   </div>
-                </div>
-                <Badge estado={m.status === 'disponible' ? 'aprobado' : 'pendiente'} />
-              </div>
-
-              {m.contenido && (
-                <div className="mt-4 p-3 bg-navy-50 rounded-xl border-l-4 border-navy-500">
-                  <p className="text-[10px] text-navy-600 font-medium italic">{m.contenido}</p>
-                </div>
-              )}
+                  <p className="text-xs text-navy-200 leading-relaxed font-medium">
+                    {modulo.description}
+                  </p>
+                  
+                  {modulo.estado === 'aprobado' && (
+                    <button 
+                      onClick={() => alert(`Próximamente: Contenido detallado de "${modulo.title}" 🚀`)}
+                      className="mt-3 text-[10px] font-bold text-navy-400 uppercase tracking-wider flex items-center gap-1"
+                    >
+                      Leer más <span className="text-xs">→</span>
+                    </button>
+                  )}
+               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
 
-        <div className="mt-4 text-center">
-            <p className="text-[10px] text-navy-200">Nuevos módulos disponibles cada semana</p>
+        <div className="bg-navy-50 border border-navy-100 p-6 rounded-3xl text-center space-y-3">
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm">
+             <HelpCircle className="text-navy-300" size={24} />
+          </div>
+          <p className="text-xs font-bold text-navy-500">¿Tenés dudas financieras?</p>
+          <p className="text-[10px] text-navy-300">Sumate a nuestra comunidad de emprendedores en Discord.</p>
+          <button className="btn-secondary w-full py-3 text-[10px]">Unirse al Discord</button>
         </div>
       </div>
     </div>
