@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function InicioPage() {
   const router = useRouter()
-  const { movimientos, perfil, getTotalesMes, init, profileId, loading: storeLoading } = useStore()
+  const { movimientos, perfil, init, profileId, loading: storeLoading, getDistribucionGanancias, porcentajeSueldo } = useStore()
   const [tab, setTab] = useState<'bolsillo' | 'negocio'>('bolsillo')
   const [sessionLoading, setSessionLoading] = useState(true)
 
@@ -41,7 +41,7 @@ export default function InicioPage() {
     checkUser()
   }, [profileId, init, router])
 
-  const { ingresos, egresos, ganancia, bolsillo } = getTotalesMes()
+  const { ingresosTotales, egresosTotales, gananciaBruta, sueldoRetenido, gananciaNetaNegocio } = getDistribucionGanancias()
 
   // Últimos 5 movimientos
   const recientes = movimientos.slice(0, 5)
@@ -113,19 +113,19 @@ export default function InicioPage() {
               <div className="absolute right-8 -bottom-8 w-20 h-20 rounded-full bg-white/5" />
 
               <p className="text-[11px] text-navy-200 mb-1 relative">Disponible para vos</p>
-              <p className="text-4xl font-semibold tracking-tight relative">{fmt(bolsillo)}</p>
+              <p className="text-4xl font-semibold tracking-tight relative">{fmt(sueldoRetenido)}</p>
               <p className="text-xs text-navy-200 mt-1 relative">
-                {perfil.porcentajeBolsillo}% de tu ganancia neta
+                {porcentajeSueldo}% de tu ganancia bruta
               </p>
 
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10 relative">
                 <div>
-                  <p className="text-[10px] text-navy-200">Ganancia neta</p>
-                  <p className="text-sm font-semibold">{fmt(ganancia)}</p>
+                  <p className="text-[10px] text-navy-200">Ganancia bruta</p>
+                  <p className="text-sm font-semibold">{fmt(gananciaBruta)}</p>
                 </div>
                 <div>
                   <p className="text-[10px] text-navy-200">Ingresado</p>
-                  <p className="text-sm font-semibold">{fmt(ingresos)}</p>
+                  <p className="text-sm font-semibold">{fmt(ingresosTotales)}</p>
                 </div>
                 <span className="flex items-center gap-1 bg-emerald-400/20 border border-emerald-400/30 rounded-full px-2.5 py-1 text-[10px] text-emerald-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -137,11 +137,11 @@ export default function InicioPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="card">
                 <p className="text-[10px] uppercase tracking-wider text-navy-200 mb-1">Ingresos del mes</p>
-                <p className="text-lg font-semibold text-navy-500">{fmt(ingresos)}</p>
+                <p className="text-lg font-semibold text-navy-500">{fmt(ingresosTotales)}</p>
               </div>
               <div className="card">
                 <p className="text-[10px] uppercase tracking-wider text-navy-200 mb-1">Gastos del mes</p>
-                <p className="text-lg font-semibold text-navy-500">{fmt(egresos)}</p>
+                <p className="text-lg font-semibold text-navy-500">{fmt(egresosTotales)}</p>
               </div>
             </div>
           </>
@@ -149,9 +149,9 @@ export default function InicioPage() {
           <>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { label: 'Ingresos', value: fmt(ingresos), color: 'text-emerald-600' },
-                { label: 'Egresos',  value: fmt(egresos),  color: 'text-orange-500' },
-                { label: 'Resultado', value: fmt(ganancia), color: 'text-navy-400' },
+                { label: 'Ingresos', value: fmt(ingresosTotales), color: 'text-emerald-600' },
+                { label: 'Egresos',  value: fmt(egresosTotales),  color: 'text-orange-500' },
+                { label: 'Resultado', value: fmt(gananciaNetaNegocio), color: 'text-navy-400' },
               ].map((s) => (
                 <div key={s.label} className="card text-center">
                   <p className="text-[9px] uppercase tracking-wider text-navy-200 mb-1">{s.label}</p>
