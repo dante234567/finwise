@@ -16,6 +16,7 @@ const useStore = create((set, get) => ({
     moneda: 'ARS',
   },
   movimientos: [],
+  /** @type {{ ingresos: number, egresos: number, ganancia: number, bolsillo: number }} */
   totalesMes: { ingresos: 0, egresos: 0, ganancia: 0, bolsillo: 0 },
   breakeven: null,
   metrics: null,
