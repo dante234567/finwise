@@ -199,9 +199,9 @@ const useStore = create((set, get) => ({
   getGastosPorCategoria: () => {
     const movs = get().movimientos.filter((m) => m.tipo === 'egreso')
     return [
-      { nombre: 'Fijo',     presupuesto: 200000, color: '#3b82d4' },
-      { nombre: 'Variable', presupuesto: 150000, color: '#1a4a8c' },
-      { nombre: 'Personal', presupuesto: 50000,  color: '#85b7eb' },
+      { nombre: 'Fijo',     presupuesto: 0, color: '#3b82d4' },
+      { nombre: 'Variable', presupuesto: 0, color: '#1a4a8c' },
+      { nombre: 'Personal', presupuesto: 0,  color: '#85b7eb' },
     ].map((cat) => ({
       ...cat,
       gastado: movs.filter((m) => m.categoria === cat.nombre).reduce((a, m) => a + m.monto, 0),
