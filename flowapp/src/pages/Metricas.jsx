@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 }
 
 export default function Metricas() {
-  const { fetchMetrics, getTotalesMes } = useStore()
+  const { fetchMetrics, getTotalesMes, getDistribucionGanancias } = useStore()
   const { ingresos, egresos, ganancia } = getTotalesMes()
   const [periodo, setPeriodo] = useState('mes')
   const [metrics, setMetrics] = useState(null)
@@ -175,6 +175,62 @@ export default function Metricas() {
             )}
           </div>
 
+
+          {/* Diagnostico Fiscal ARCA */}
+          {(() => {
+            const dist = getDistribucionGanancias()
+            return (
+              <div className="card">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold text-navy-500">Diagnostico fiscal ARCA</h2>
+                  <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full ${
+                    dist.saludFiscal === 'reservada' ? 'bg-emerald-50 text-emerald-600'
+                    : dist.saludFiscal === 'critica' ? 'bg-red-50 text-red-500'
+                    : 'bg-orange-50 text-orange-500'
+                  }`}>
+                    {dist.saludFiscal === 'reservada' ? 'Reserva activa'
+                      : dist.saludFiscal === 'critica' ? 'En perdida'
+                      : 'Sin reserva'}
+                  </span>
+                </div>
+                <div className="space-y-2 mb-4">
+                  {[
+                    { label: 'Ganancia bruta',     value: dist.ganancia,       color: 'text-navy-500' },
+                    { label: 'Reserva ARCA (25%)', value: -dist.reservaARCA,   color: 'text-orange-500' },
+                    { label: 'Ganancia neta real', value: dist.gananciaNeta,   color: 'text-emerald-600' },
+                    { label: 'Tu sueldo',          value: dist.sueldoDuenio,   color: 'text-navy-400' },
+                    { label: 'Queda en negocio',   value: dist.capitalNegocio, color: 'text-navy-300' },
+                  ].map((row) => (
+                    <div key={row.label} className="flex justify-between items-center text-xs">
+                      <span className="text-navy-300">{row.label}</span>
+                      <span className={`font-semibold ${row.color}`}>
+                        {row.value < 0 ? '-' : ''}{fmt(Math.abs(row.value))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-navy-50 my-3" />
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-navy-50 rounded-xl p-3">
+                    <p className="text-[9px] uppercase tracking-wider text-navy-200 mb-1">Margen de seguridad</p>
+                    <p className="text-lg font-semibold text-navy-500">{dist.margenSeguridad}%</p>
+                  </div>
+                  <div className="bg-navy-50 rounded-xl p-3">
+                    <p className="text-[9px] uppercase tracking-wider text-navy-200 mb-1">Apalancamiento op.</p>
+                    <p className="text-lg font-semibold text-navy-500">{dist.apalancamiento}x</p>
+                  </div>
+                  <div className="bg-orange-50 rounded-xl p-3">
+                    <p className="text-[9px] uppercase tracking-wider text-orange-300 mb-1">Carga ARCA latente</p>
+                    <p className="text-lg font-semibold text-orange-500">{fmt(dist.reservaARCA)}</p>
+                  </div>
+                  <div className="bg-emerald-50 rounded-xl p-3">
+                    <p className="text-[9px] uppercase tracking-wider text-emerald-300 mb-1">Capital operativo</p>
+                    <p className="text-lg font-semibold text-emerald-600">{fmt(dist.capitalNegocio)}</p>
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
         </div>
       )}
     </div>
