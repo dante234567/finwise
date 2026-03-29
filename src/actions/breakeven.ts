@@ -70,18 +70,18 @@ export async function calculateBreakeven(
 
     // CF — Suma de montos de egresos fijos del negocio
     const fixedCosts = businessTransactions
-      .filter((t) => t.type === 'EXPENSE' && t.isFixed)
-      .reduce((sum, t) => sum.add(t.amount), ZERO)
+      .filter((t: any) => t.type === 'EXPENSE' && t.isFixed)
+      .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
 
     // Ingresos totales del negocio
     const totalIncome = businessTransactions
-      .filter((t) => t.type === 'INCOME')
-      .reduce((sum, t) => sum.add(t.amount), ZERO)
+      .filter((t: any) => t.type === 'INCOME')
+      .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
 
     // Egresos variables del negocio
     const variableCosts = businessTransactions
-      .filter((t) => t.type === 'EXPENSE' && !t.isFixed)
-      .reduce((sum, t) => sum.add(t.amount), ZERO)
+      .filter((t: any) => t.type === 'EXPENSE' && !t.isFixed)
+      .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
 
     // v — Razón de costo variable / ventas
     const v = totalIncome.isZero() ? ZERO : variableCosts.div(totalIncome)
