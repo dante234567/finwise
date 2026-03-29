@@ -43,7 +43,8 @@ const TABS = [
   },
   {
     href: '/gastos',
-    label: 'Gastos',
+    // TAREA 3: Corrección Semántica 2 (Sección Inferior) - 'Gastos' -> 'Cuentas'
+    label: 'Cuentas',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -70,7 +71,6 @@ export default function BottomNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-navy-100 flex safe-bottom"
          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {TABS.map((tab) => {
-        // Evaluación directa de la ruta para garantizar sincronización absoluta
         const isActive = pathname === tab.href
 
         return (

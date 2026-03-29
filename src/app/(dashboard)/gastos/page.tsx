@@ -103,17 +103,22 @@ export default function GastosPage() {
         <div className="card space-y-3 bg-navy-50/50 border-navy-100">
           <div className="flex justify-between items-center mb-1">
             <h2 className="text-xs font-bold uppercase tracking-wider text-navy-400">Registrar {form.tipo}</h2>
-            <div className="flex bg-navy-100 rounded-lg p-0.5 gap-0.5">
-              {[['egreso', 'Gasto'], ['ingreso', 'Ingreso']].map(([key, label]) => (
-                <button 
-                  key={key} 
-                  onClick={() => cambiarTipoForm(key as 'ingreso' | 'egreso')}
-                  className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${form.tipo === key ? 'bg-white text-navy-500 shadow-xs' : 'text-navy-300'}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            
+            {/* TAREA 1: Aislamiento de Componente (Renderizado Condicional) */}
+            {tipoFiltro === 'todos' && (
+              <div className="flex bg-navy-100 rounded-lg p-0.5 gap-0.5">
+                {/* TAREA 2: Corrección Semántica 1 (Filtro) - 'egreso' -> 'gastos' */}
+                {[['egreso', 'Gastos'], ['ingreso', 'Ingreso']].map(([key, label]) => (
+                  <button 
+                    key={key} 
+                    onClick={() => cambiarTipoForm(key as 'ingreso' | 'egreso')}
+                    className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${form.tipo === key ? 'bg-white text-navy-500 shadow-xs' : 'text-navy-300'}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-3">
