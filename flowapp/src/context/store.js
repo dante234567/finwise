@@ -197,6 +197,52 @@ const useStore = create((set, get) => ({
 
   getTotalesMes: () => get().totalesMes,
 
+  // Distribución de ganancias con reserva fiscal ARCA (25% sobre ganancia bruta)
+  getDistribucionGanancias: () => {
+    const { ingresos, egresos, ganancia } = get().getTotalesMes()
+    const porcentajeBolsillo = get().perfil.porcentajeBolsillo
+
+    // Reserva fiscal: 25% de la ganancia bruta antes de cualquier retiro
+    const ALICUOTA_ARCA = 0.25
+    const reservaARCA = Math.max(0, ganancia * ALICUOTA_ARCA)
+
+    // Ganancia neta real después de reserva fiscal
+    const gananciaNeta = Math.max(0, ganancia - reservaARCA)
+
+    // Sueldo del dueño sobre la ganancia neta real (no sobre la bruta)
+    const sueldoDuenio = gananciaNeta * (porcentajeBolsillo / 100)
+
+    // Capital que queda en el negocio
+    const capitalNegocio = gananciaNeta - sueldoDuenio
+
+    // Margen de seguridad: (Ventas - PE) / Ventas
+    // Si no hay breakeven calculado, usar 0
+    const breakevenVal = get().breakeven?.breakeven ? Number(get().breakeven.breakeven) : 0
+    const margenSeguridad = ingresos > 0 && breakevenVal > 0
+      ? Math.max(0, ((ingresos - breakevenVal) / ingresos) * 100)
+      : 0
+
+    // Apalancamiento operativo: % cambio ganancia / % cambio ventas
+    // Aproximación: CF / (CF + Ganancia) — evita división por cero
+    const costosFijos = egresos * 0.4 // aproximación conservadora
+    const apalancamiento = (ingresos - egresos) !== 0
+      ? Math.abs(costosFijos / Math.max(1, ganancia))
+      : 0
+
+    return {
+      ingresos,
+      egresos,
+      ganancia,
+      reservaARCA,
+      gananciaNeta,
+      sueldoDuenio,
+      capitalNegocio,
+      margenSeguridad: margenSeguridad.toFixed(1),
+      apalancamiento: apalancamiento.toFixed(2),
+      saludFiscal: reservaARCA > 0 ? 'reservada' : ganancia <= 0 ? 'critica' : 'sin_reserva',
+    }
+  },
+
   getGastosPorCategoria: () => {
     const movs = get().movimientos.filter((m) => m.tipo === 'egreso')
     return [
