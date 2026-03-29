@@ -258,3 +258,8 @@ const useStore = create((set, get) => ({
 }))
 
 export default useStore
+
+// Debugging: Exponer el store globalmente en el navegador
+if (typeof window !== 'undefined') {
+  window.__store = useStore
+}
