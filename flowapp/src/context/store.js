@@ -197,37 +197,30 @@ const useStore = create((set, get) => ({
 
   getTotalesMes: () => get().totalesMes,
 
-  // Distribución de ganancias con reserva fiscal ARCA (25% sobre ganancia bruta)
   getDistribucionGanancias: () => {
-    const { ingresos, egresos, ganancia } = get().getTotalesMes()
-    const porcentajeBolsillo = get().perfil.porcentajeBolsillo
+    const totales = get().totalesMes
+    const ingresos = totales?.ingresos ?? 0
+    const egresos = totales?.egresos ?? 0
+    const ganancia = totales?.ganancia ?? 0
+    const porcentajeBolsillo = get().perfil?.porcentajeBolsillo ?? 35
 
-    // Reserva fiscal: 25% de la ganancia bruta antes de cualquier retiro
     const ALICUOTA_ARCA = 0.25
-    const reservaARCA = Math.max(0, ganancia * ALICUOTA_ARCA)
+    const reservaARCA = ganancia > 0 ? ganancia * ALICUOTA_ARCA : 0
+    const gananciaNeta = ganancia > 0 ? ganancia - reservaARCA : ganancia
+    const sueldoDuenio = gananciaNeta > 0 ? gananciaNeta * (porcentajeBolsillo / 100) : 0
+    const capitalNegocio = gananciaNeta > 0 ? gananciaNeta - sueldoDuenio : 0
 
-    // Ganancia neta real después de reserva fiscal
-    const gananciaNeta = Math.max(0, ganancia - reservaARCA)
-
-    // Sueldo del dueño sobre la ganancia neta real (no sobre la bruta)
-    const sueldoDuenio = gananciaNeta * (porcentajeBolsillo / 100)
-
-    // Capital que queda en el negocio
-    const capitalNegocio = gananciaNeta - sueldoDuenio
-
-    // Margen de seguridad: (Ventas - PE) / Ventas
-    // Si no hay breakeven calculado, usar 0
     const breakevenVal = get().breakeven?.breakeven ? Number(get().breakeven.breakeven) : 0
     const margenSeguridad = ingresos > 0 && breakevenVal > 0
-      ? Math.max(0, ((ingresos - breakevenVal) / ingresos) * 100)
-      : 0
+      ? Math.max(0, ((ingresos - breakevenVal) / ingresos) * 100).toFixed(1)
+      : '0.0'
 
-    // Apalancamiento operativo: % cambio ganancia / % cambio ventas
-    // Aproximación: CF / (CF + Ganancia) — evita división por cero
-    const costosFijos = egresos * 0.4 // aproximación conservadora
-    const apalancamiento = (ingresos - egresos) !== 0
-      ? Math.abs(costosFijos / Math.max(1, ganancia))
-      : 0
+    const costosFijos = egresos * 0.4
+    const apalancamiento = ganancia !== 0
+      ? Math.abs(costosFijos / Math.max(1, Math.abs(ganancia))).toFixed(2)
+      : '0.00'
+
+    const saludFiscal = ganancia <= 0 ? 'critica' : reservaARCA > 0 ? 'reservada' : 'sin_reserva'
 
     return {
       ingresos,
@@ -237,9 +230,9 @@ const useStore = create((set, get) => ({
       gananciaNeta,
       sueldoDuenio,
       capitalNegocio,
-      margenSeguridad: margenSeguridad.toFixed(1),
-      apalancamiento: apalancamiento.toFixed(2),
-      saludFiscal: reservaARCA > 0 ? 'reservada' : ganancia <= 0 ? 'critica' : 'sin_reserva',
+      margenSeguridad,
+      apalancamiento,
+      saludFiscal,
     }
   },
 
