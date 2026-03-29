@@ -30,12 +30,12 @@ export async function GET(request: NextRequest) {
     const ZERO = new Prisma.Decimal('0')
 
     const ingresos = transactions
-      .filter((t) => t.type === 'INCOME')
-      .reduce((sum, t) => sum.add(t.amount), ZERO)
+      .filter((t: any) => t.type === 'INCOME')
+      .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
 
     const egresos = transactions
-      .filter((t) => t.type === 'EXPENSE')
-      .reduce((sum, t) => sum.add(t.amount), ZERO)
+      .filter((t: any) => t.type === 'EXPENSE')
+      .reduce((sum: Prisma.Decimal, t: any) => sum.add(t.amount), ZERO)
 
     const ganancia = ingresos.sub(egresos)
     const porcentajeBolsillo = profile ? Number(profile.targetMargin.toString()) * 100 : 35
