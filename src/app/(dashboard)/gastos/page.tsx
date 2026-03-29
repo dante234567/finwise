@@ -5,7 +5,9 @@ import useStore from '@/store/useStore'
 import { fmt, fmtRelativa } from '@/lib/utils/format'
 import { Badge, Modal, ProgressBar, EmptyState } from '@/components/ui/FlowUI'
 
-const CATEGORIAS_DEFAULT = ['Insumos', 'Personal', 'Alquiler', 'Marketing', 'Ventas', 'Otros']
+// 1. Bifurcación de Constantes
+const CATEGORIAS_INGRESO = ['Ventas', 'Otros Ingresos']
+const CATEGORIAS_EGRESO = ['Insumos', 'Personal', 'Alquiler', 'Marketing', 'Otros Gastos']
 
 export default function GastosPage() {
   const { movimientos, addMovimiento, deleteMovimiento, getGastosPorCategoria } = useStore()
@@ -27,6 +29,23 @@ export default function GastosPage() {
 
   const setF = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }))
 
+  // 3. Auto-corrección de Estado al mutar tipo en el formulario
+  const cambiarTipoForm = (tipo: 'ingreso' | 'egreso') => {
+    setForm(f => ({
+      ...f,
+      tipo,
+      categoria: tipo === 'ingreso' ? 'Ventas' : 'Insumos'
+    }))
+  }
+
+  // 4. Sincronización de Filtros (Top Level)
+  const cambiarFiltroPrincipal = (tipo: 'todos' | 'ingreso' | 'egreso') => {
+    setTipoFiltro(tipo)
+    if (tipo !== 'todos') {
+      cambiarTipoForm(tipo)
+    }
+  }
+
   const handleSave = async () => {
     if (!form.descripcion.trim()) return setError('La descripción es requerida')
     if (!form.monto || Number(form.monto) <= 0) return setError('Ingresá un monto válido')
@@ -41,7 +60,7 @@ export default function GastosPage() {
       quantity: Number(form.cantidad) 
     })
 
-    // Reset formulario conservando tipo
+    // Reset formulario conservando tipo y categoría por defecto
     setForm({ 
       ...form,
       descripcion: '', 
@@ -70,7 +89,7 @@ export default function GastosPage() {
         {/* Filtros de Pestaña Principal */}
         <div className="flex bg-white/10 rounded-xl p-1 gap-1">
           {(['todos', 'ingreso', 'egreso'] as const).map((key) => (
-            <button key={key} onClick={() => setTipoFiltro(key)}
+            <button key={key} onClick={() => cambiarFiltroPrincipal(key)}
               className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${tipoFiltro === key ? 'bg-white text-navy-500 shadow-sm' : 'text-navy-200'}`}>
               {key === 'todos' ? 'Todos' : key === 'ingreso' ? 'Ingresos' : 'Egresos'}
             </button>
@@ -80,7 +99,7 @@ export default function GastosPage() {
 
       <div className="px-4 pt-4 space-y-4 text-left">
         
-        {/* TAREA 2 & 3: Formulario de Captura Bifurcado en la parte superior */}
+        {/* Formulario de Captura Bifurcado en la parte superior */}
         <div className="card space-y-3 bg-navy-50/50 border-navy-100">
           <div className="flex justify-between items-center mb-1">
             <h2 className="text-xs font-bold uppercase tracking-wider text-navy-400">Registrar {form.tipo}</h2>
@@ -88,7 +107,7 @@ export default function GastosPage() {
               {[['egreso', 'Gasto'], ['ingreso', 'Ingreso']].map(([key, label]) => (
                 <button 
                   key={key} 
-                  onClick={() => setF('tipo', key)}
+                  onClick={() => cambiarTipoForm(key as 'ingreso' | 'egreso')}
                   className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${form.tipo === key ? 'bg-white text-navy-500 shadow-xs' : 'text-navy-300'}`}
                 >
                   {label}
@@ -125,14 +144,14 @@ export default function GastosPage() {
               />
             </div>
 
+            {/* 2. Renderizado Dinámico del Select */}
             <select className="input-base text-sm" value={form.categoria} onChange={(e) => setF('categoria', e.target.value)}>
-              {CATEGORIAS_DEFAULT.map((c) => (
+              {(form.tipo === 'ingreso' ? CATEGORIAS_INGRESO : CATEGORIAS_EGRESO).map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
 
             <div className="flex flex-col gap-3 pt-1 border-t border-navy-100 mt-1">
-              {/* Selector de Negocio vs Personal */}
               <div className="flex items-center justify-between">
                 <span className="text-xs text-navy-400 font-medium">¿Es del negocio o personal?</span>
                 <div className="flex gap-2">
@@ -151,7 +170,6 @@ export default function GastosPage() {
                 </div>
               </div>
 
-              {/* Bifurcación: Periodicidad (Solo para Egresos) */}
               {form.tipo === 'egreso' && (
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-navy-400 font-medium">Periodicidad</span>
@@ -251,7 +269,6 @@ export default function GastosPage() {
                 </div>
               ))}
 
-              {/* TAREA 1: Botón Mostrar más condicional */}
               {!mostrarMas && movFiltrados.length > 5 && (
                 <button 
                   onClick={() => setMostrarMas(true)}
