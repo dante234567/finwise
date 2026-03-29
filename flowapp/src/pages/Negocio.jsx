@@ -20,11 +20,15 @@ const CustomTooltip = ({ active, payload, label }) => {
 }
 
 export default function Negocio() {
-  const { movimientos, presupuestos, perfil, getTotalesMes, addPresupuesto, updatePresupuesto, deletePresupuesto } = useStore()
+  const { movimientos, presupuestos, perfil, getTotalesMes, fetchBreakeven, breakeven, addPresupuesto, updatePresupuesto, deletePresupuesto } = useStore()
   const { ingresos, egresos, ganancia } = getTotalesMes()
   const [tab, setTab] = useState('finanzas') // 'finanzas' | 'presupuestos'
   const [modalNuevo, setModalNuevo] = useState(false)
   const [modalDetalle, setModalDetalle] = useState(null)
+  
+  React.useEffect(() => {
+    fetchBreakeven()
+  }, [])
 
   // ── Datos para el gráfico (últimas 6 semanas simplificado) ──────────────────
   const meses = ['Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar']
@@ -113,6 +117,45 @@ export default function Negocio() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Card Breakeven */}
+            <div className="card">
+              <h2 className="text-sm font-semibold text-navy-500 mb-3">Punto de equilibrio</h2>
+              {!breakeven ? (
+                <p className="text-xs text-navy-200 text-center py-4">Calculando...</p>
+              ) : breakeven.error ? (
+                <div className="bg-orange-50 rounded-xl p-3">
+                  <p className="text-xs font-semibold text-orange-600 mb-1">
+                    {breakeven.code === 'STRUCTURAL_INVIABILITY' ? 'Estructura de costos crítica' : 'Sin datos suficientes'}
+                  </p>
+                  <p className="text-[10px] text-orange-500">
+                    {breakeven.code === 'STRUCTURAL_INVIABILITY'
+                      ? 'Los costos variables superan los ingresos. Revisá tu estructura de gastos.'
+                      : 'Registrá ingresos y egresos para calcular tu punto de equilibrio.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="bg-navy-50 rounded-xl p-3">
+                    <p className="text-[10px] uppercase tracking-wider text-navy-200 mb-1">Necesitás facturar</p>
+                    <p className="text-2xl font-semibold text-navy-500">{fmt(Number(breakeven.breakeven))}</p>
+                    <p className="text-[10px] text-navy-200 mt-0.5">para cubrir todos tus costos</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="card bg-navy-50">
+                      <p className="text-[9px] uppercase tracking-wider text-navy-200 mb-1">Margen contrib.</p>
+                      <p className="text-sm font-semibold text-navy-500">
+                        {(Number(breakeven.contributionMargin) * 100).toFixed(1)}%
+                      </p>
+                    </div>
+                    <div className="card bg-navy-50">
+                      <p className="text-[9px] uppercase tracking-wider text-navy-200 mb-1">Carga fija total</p>
+                      <p className="text-sm font-semibold text-navy-500">{fmt(Number(breakeven.totalFixedLoad))}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         ) : (

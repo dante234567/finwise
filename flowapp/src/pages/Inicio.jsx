@@ -55,7 +55,7 @@ export default function Inicio() {
         {tab === 'bolsillo' ? (
           <>
             {/* ── Card Bolsillo ──────────────────────────────────────────────── */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-navy-400 to-navy-500 p-5 text-white">
+            <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-navy-400 to-navy-500 p-5 text-white">
               {/* Círculo decorativo */}
               <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/10" />
               <div className="absolute right-8 -bottom-8 w-20 h-20 rounded-full bg-white/5" />
@@ -122,7 +122,7 @@ export default function Inicio() {
         <div className="card">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-navy-500">Últimos movimientos</h2>
-            <Link to="/gastos" className="text-[11px] text-navy-300">Ver todo</Link>
+            <Link to="/gastos" className="text-[11px] text-navy-300">Ver cuentas</Link>
           </div>
 
           {recientes.length === 0 ? (
@@ -131,7 +131,7 @@ export default function Inicio() {
             <div className="space-y-3">
               {recientes.map((mov) => (
                 <div key={mov.id} className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                     mov.tipo === 'ingreso' ? 'bg-emerald-50' : 'bg-orange-50'
                   }`}>
                     <svg viewBox="0 0 24 24" fill="none" stroke={mov.tipo === 'ingreso' ? '#059669' : '#f97316'} strokeWidth={2} className="w-3.5 h-3.5">
@@ -144,7 +144,7 @@ export default function Inicio() {
                     <p className="text-xs font-medium text-navy-500 truncate">{mov.descripcion}</p>
                     <p className="text-[10px] text-navy-200">{fmtRelativa(mov.fecha)}</p>
                   </div>
-                  <p className={`text-sm font-semibold flex-shrink-0 ${
+                  <p className={`text-sm font-semibold shrink-0 ${
                     mov.tipo === 'ingreso' ? 'text-emerald-600' : 'text-orange-500'
                   }`}>
                     {mov.tipo === 'ingreso' ? '+' : '-'}{fmt(mov.monto)}

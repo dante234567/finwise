@@ -18,6 +18,7 @@ const useStore = create((set, get) => ({
   movimientos: [],
   totalesMes: { ingresos: 0, egresos: 0, ganancia: 0, bolsillo: 0 },
   breakeven: null,
+  metrics: null,
   loading: false,
   error: null,
 
@@ -148,6 +149,45 @@ const useStore = create((set, get) => ({
     } catch {
       set({ breakeven: { error: 'No se pudo calcular', code: 'UNKNOWN_ERROR' } })
     }
+  },
+
+  // Actualizar % de bolsillo en el backend
+  updateBolsillo: async (porcentaje) => {
+    const profileId = get().profileId
+    if (!profileId) return
+    // porcentaje viene como número 20-50, convertir a fracción 0.20-0.50
+    const targetMargin = porcentaje / 100
+    try {
+      const res = await fetch(`${API}/api/profile`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileId, targetMargin }),
+      })
+      const { success } = await res.json()
+      if (success) {
+        set((s) => ({ perfil: { ...s.perfil, porcentajeBolsillo: porcentaje } }))
+        await get().fetchDashboard()
+      }
+    } catch (err) {
+      console.error('[store.updateBolsillo]', err)
+    }
+  },
+
+  // Cargar métricas históricas del backend
+  fetchMetrics: async () => {
+    const profileId = get().profileId
+    if (!profileId) return null
+    try {
+      const res = await fetch(`${API}/api/metrics?profileId=${profileId}`)
+      const { success, data } = await res.json()
+      if (success) {
+        set({ metrics: data })
+        return data
+      }
+    } catch (err) {
+      console.error('[store.fetchMetrics]', err)
+    }
+    return null
   },
 
   getTotalesMes: () => get().totalesMes,

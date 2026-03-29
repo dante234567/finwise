@@ -10,21 +10,25 @@ export default function Gastos() {
   const { movimientos, categorias, addMovimiento, deleteMovimiento, getGastosPorCategoria } = useStore()
   const [modalNuevo, setModalNuevo] = useState(false)
   const [tipoFiltro, setTipoFiltro] = useState('todos') // 'todos' | 'ingreso' | 'egreso'
+  const [origenFiltro, setOrigenFiltro] = useState('todos') // 'todos' | 'negocio' | 'personal'
   const [movSelected, setMovSelected] = useState(null)
 
   const gastosCategoria = getGastosPorCategoria()
 
   // Filtro de movimientos
-  const movFiltrados = movimientos.filter((m) =>
-    tipoFiltro === 'todos' ? true : m.tipo === tipoFiltro
-  )
+  const movFiltrados = movimientos.filter((m) => {
+    const pasaTipo = tipoFiltro === 'todos' ? true : m.tipo === tipoFiltro
+    const pasaOrigen = origenFiltro === 'todos' ? true :
+      origenFiltro === 'negocio' ? m.isBusiness : !m.isBusiness
+    return pasaTipo && pasaOrigen
+  })
 
   return (
     <div className="page-enter">
       {/* Header */}
       <div className="bg-navy-500 px-5 pt-12 pb-6 rounded-b-[28px]">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-white text-lg font-semibold">Gastos</h1>
+          <h1 className="text-white text-lg font-semibold">Cuentas</h1>
           <button
             onClick={() => setModalNuevo(true)}
             className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center"
@@ -40,6 +44,20 @@ export default function Gastos() {
           {[['todos', 'Todos'], ['ingreso', 'Ingresos'], ['egreso', 'Egresos']].map(([key, label]) => (
             <button key={key} onClick={() => setTipoFiltro(key)}
               className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${tipoFiltro === key ? 'bg-white text-navy-500' : 'text-navy-200'}`}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-2 mt-2">
+          {[['todos', 'Todos'], ['negocio', 'Negocio'], ['personal', 'Personal']].map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setOrigenFiltro(key)}
+              className={`px-3 py-1 rounded-lg text-[10px] font-medium transition-all ${
+                origenFiltro === key ? 'bg-white/20 text-white' : 'text-navy-300'
+              }`}
+            >
               {label}
             </button>
           ))}
@@ -106,7 +124,11 @@ export default function Gastos() {
                     <div className="flex items-center gap-2 mt-0.5">
                       <p className="text-[10px] text-navy-200">{fmtRelativa(mov.fecha)}</p>
                       <span className="text-[10px] text-navy-200">·</span>
-                      <p className="text-[10px] text-navy-300">{mov.categoria}</p>
+                      <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${
+                        mov.isBusiness ? 'bg-navy-50 text-navy-400' : 'bg-emerald-50 text-emerald-600'
+                      }`}>
+                        {mov.isBusiness ? 'Negocio' : 'Personal'}
+                      </span>
                     </div>
                   </div>
                   <p className={`text-sm font-semibold shrink-0 ${

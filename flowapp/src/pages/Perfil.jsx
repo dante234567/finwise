@@ -7,13 +7,13 @@ import { Modal } from '../components/ui'
 const PORCENTAJES = [20, 25, 30, 35, 40, 50]
 
 export default function Perfil() {
-  const { perfil, updatePerfil, getTotalesMes } = useStore()
+  const { perfil, updatePerfil, updateBolsillo, getTotalesMes } = useStore()
   const { bolsillo } = getTotalesMes()
   const [modalEditar, setModalEditar] = useState(false)
   const [saved, setSaved] = useState(false)
 
-  const handlePct = (pct) => {
-    updatePerfil({ porcentajeBolsillo: pct })
+  const handlePct = async (pct) => {
+    await updateBolsillo(pct)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -26,7 +26,7 @@ export default function Perfil() {
 
         {/* Avatar + datos */}
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-navy-300 flex items-center justify-center text-white text-lg font-semibold flex-shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-navy-300 flex items-center justify-center text-white text-lg font-semibold shrink-0">
             {perfil.nombre.split(' ').map((n) => n[0]).join('').slice(0, 2)}
           </div>
           <div>
@@ -42,7 +42,7 @@ export default function Perfil() {
       <div className="px-4 pt-4 space-y-4">
 
         {/* Card bolsillo actual */}
-        <div className="bg-gradient-to-br from-navy-400 to-navy-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-br from-navy-400 to-navy-500 rounded-2xl p-4 text-white">
           <p className="text-[11px] text-navy-200 mb-1">Tu bolsillo este mes</p>
           <p className="text-2xl font-semibold">{fmt(bolsillo)}</p>
           <p className="text-xs text-navy-200 mt-1">Basado en {perfil.porcentajeBolsillo}% de tu ganancia</p>
@@ -122,7 +122,13 @@ export default function Perfil() {
         </div>
 
         {/* Cerrar sesión */}
-        <button className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-red-100 bg-red-50 text-red-500 text-sm font-medium active:scale-95 transition-all">
+        <button
+          onClick={() => {
+            localStorage.removeItem('finwise_profile_id')
+            window.location.reload()
+          }}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-red-100 bg-red-50 text-red-500 text-sm font-medium active:scale-95 transition-all"
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
             <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
             <polyline points="16 17 21 12 16 7" />
