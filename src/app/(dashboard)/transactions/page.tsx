@@ -1,9 +1,5 @@
-// Página de transacciones — lista y gestión de movimientos financieros
+import { redirect } from 'next/navigation'
+
 export default function TransactionsPage() {
-  return (
-    <div>
-      <h1>Transacciones</h1>
-      {/* TODO: Lista de transacciones con filtros */}
-    </div>
-  )
+  redirect('/gastos')
 }
